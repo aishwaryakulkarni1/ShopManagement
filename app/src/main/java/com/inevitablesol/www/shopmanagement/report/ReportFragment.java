@@ -10,11 +10,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.inevitablesol.www.shopmanagement.R;
 import com.inevitablesol.www.shopmanagement.analysis.date.DatePickFragments;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,6 +30,7 @@ public class ReportFragment extends Fragment implements DatePickFragments.OnDate
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String DayBook = "DayBook";
+
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
@@ -37,7 +42,10 @@ public class ReportFragment extends Fragment implements DatePickFragments.OnDate
     private  Context context;
 
     private static final String TAG = "ReportFragment";
-    private FragmentActivity fragmentActivity;;
+    private FragmentActivity fragmentActivity;
+
+    TextView dispFromDate;
+
 
     public ReportFragment() {
         // Required empty public constructor
@@ -88,8 +96,10 @@ public class ReportFragment extends Fragment implements DatePickFragments.OnDate
             tx_title.setText("Day Book Report");
         }
 
-        ImageView  imageView=(ImageView)view.findViewById(R.id.report_imgfromDate);
-        imageView.setOnClickListener(new View.OnClickListener()
+        dispFromDate= (TextView) view.findViewById(R.id.total_fromdate);
+
+        ImageView  fromDate=(ImageView)view.findViewById(R.id.report_imgfromDate);
+        fromDate.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -99,11 +109,94 @@ public class ReportFragment extends Fragment implements DatePickFragments.OnDate
 
              //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
                 datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                final Calendar myCalendar = Calendar.getInstance();
+
+                DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                          int dayOfMonth) {
+                        // TODO Auto-generated method stub
+                        myCalendar.set(Calendar.YEAR, year);
+                        myCalendar.set(Calendar.MONTH, monthOfYear);
+                        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        Date date1 = myCalendar.getTime();
+
+                        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                        String currentDateTimeString= dateFormat.format(date1);
+                        dispFromDate.setText(currentDateTimeString);
+                    }
+
+                };
+
+
+                Log.d("date", String.valueOf(myCalendar.getTime()));
+            }
+        });
+
+        ImageView iv2 = (ImageView)view.findViewById(R.id.total_todate_image);
+        iv2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+            }
+        });
+
+        ImageView iv3 = (ImageView)view.findViewById(R.id.total_imgMonth);
+        iv3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+            }
+        });
+
+        ImageView iv4 = (ImageView)view.findViewById(R.id.total_imgYear);
+        iv4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+            }
+        });
+
+        ImageView iv5 = (ImageView) view.findViewById(R.id.img_onlyYear);
+        iv5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+            }
+        });
+
+        TextView iv6 = (TextView)view.findViewById(R.id.txt_tillDate);
+        iv6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
             }
         });
 
         return view;
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri)

@@ -31,9 +31,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class DayBook_Activity extends AppCompatActivity implements ReportFragment.OnFragmentInteractionListener
@@ -87,10 +89,9 @@ public class DayBook_Activity extends AppCompatActivity implements ReportFragmen
         txt_e_balanceDue=(TextView)findViewById(R.id.e_total_balanceDue);
         txt_e_totalInvoice=(TextView)findViewById(R.id.e_total_invoice);
 
-        Date dt = new Date();
-        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
-        currentDateTimeString = dateFormat.format(dt);
-
+        //Current Date Display
+        currentDateTimeString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        currentDate.setText(currentDateTimeString);
 
         globalPool= (GlobalPool) this.getApplicationContext();
 

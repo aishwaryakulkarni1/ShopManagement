@@ -1,6 +1,7 @@
 package com.inevitablesol.www.shopmanagement.report;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Report_Tax extends AppCompatActivity
@@ -45,6 +47,7 @@ public class Report_Tax extends AppCompatActivity
     private ProgressDialog loading;
     private String currentDateTimeString;
     private RecyclerView recyclerView;
+    private ImageView imgTaxDownload;
 
     private TextView sale_tax,sale_gst,sale_amnt,pur_tax,pur_gst,pur_amnt;
     private TextView  sale_cgst,sale_igst,sale_sgst,pur_cgst,pur_igst,pur_sgst;
@@ -81,9 +84,18 @@ public class Report_Tax extends AppCompatActivity
                 showDate();
             }
         });
-        Date dt = new Date();
-        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
-        currentDateTimeString = dateFormat.format(dt);
+        currentDate = (TextView) findViewById(R.id.bill_curruntDate);
+        currentDateTimeString = new SimpleDateFormat("MMMM", Locale.getDefault()).format(new Date());
+        currentDate.setText(currentDateTimeString);
+
+        imgTaxDownload = (ImageView) findViewById(R.id.sale_download_product);
+        imgTaxDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Report_Tax.this,ReportActivity_Dailog.class));
+            }
+        });
+
         getReport();
     }
 

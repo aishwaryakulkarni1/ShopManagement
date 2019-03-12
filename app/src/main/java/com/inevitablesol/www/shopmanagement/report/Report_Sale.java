@@ -1,6 +1,7 @@
 package com.inevitablesol.www.shopmanagement.report;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Report_Sale extends AppCompatActivity implements WEBAPI
@@ -53,6 +55,8 @@ public class Report_Sale extends AppCompatActivity implements WEBAPI
     private SaleAdater saleAdapter;
     private  TextView txt_totalBalnce;
     private  TextView txt_totalAmount;
+
+    private ImageView imgSaleDownload;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -74,9 +78,19 @@ public class Report_Sale extends AppCompatActivity implements WEBAPI
                 showDate();
             }
         });
-        Date dt = new Date();
-        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
-        currentDateTimeString = dateFormat.format(dt);
+
+        currentDate = (TextView) findViewById(R.id.bill_curruntDate);
+        currentDateTimeString = new SimpleDateFormat("MMMM", Locale.getDefault()).format(new Date());
+        currentDate.setText(currentDateTimeString);
+
+        imgSaleDownload = (ImageView) findViewById(R.id.sale_download_product);
+        imgSaleDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Report_Sale.this,ReportActivity_Dailog.class));
+            }
+        });
+
         getReportBySale();
     }
 
@@ -93,7 +107,7 @@ public class Report_Sale extends AppCompatActivity implements WEBAPI
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
 
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM");
                 currentDateTimeString= dateFormat.format(calendar.getTime());
 
                 currentDate.setText(dateFormat.format(calendar.getTime()));

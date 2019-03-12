@@ -51,7 +51,7 @@
                     <android.support.v7.widget.AppCompatRadioButton
                         android:layout_width="wrap_content"
                         style="@style/RadioButton"
-                        android:text="From"
+                        android:text="From:"
                         android:id="@+id/total_from"
                         android:textColor="@color/white"
                         android:layout_height="wrap_content" />
@@ -61,7 +61,7 @@
                         android:layout_width="wrap_content"
                         style="@style/RadioButton"
                         android:id="@+id/total_month"
-                        android:text="Month"
+                        android:text="Month:"
                         android:textColor="@color/white"
                         android:layout_height="wrap_content" />
 
@@ -71,7 +71,7 @@
                     <android.support.v7.widget.AppCompatRadioButton
                         android:layout_width="wrap_content"
                         style="@style/RadioButton"
-                        android:text="Year"
+                        android:text="Year:"
                         android:id="@+id/total_year"
                         android:textColor="@color/white"
                         android:layout_height="wrap_content" />
@@ -79,7 +79,7 @@
                     <android.support.v7.widget.AppCompatRadioButton
                         android:layout_width="wrap_content"
                         style="@style/RadioButton"
-                        android:text="Till"
+                        android:text="Till:"
                         android:id="@+id/till"
                         android:textColor="@color/white"
                         android:layout_height="wrap_content" />
@@ -102,10 +102,9 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_weight="1.30"
-                        android:text="From"
                         android:id="@+id/total_fromdate"
                         android:layout_gravity="center"
-                        android:textColor="@color/color_grey"
+                        android:textColor="@color/white"
                         android:layout_height="wrap_content" />
                     <ImageView
                         android:layout_width="wrap_content"
@@ -117,12 +116,12 @@
                         android:layout_width="wrap_content"
                         android:text="To"
                         android:layout_gravity="center"
-                        android:textColor="@color/color_grey"
+                        android:textColor="@color/white"
                         android:layout_height="wrap_content" />
                     <TextView
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:text="To"
+
                         android:id="@+id/total_toDate"
                         android:layout_marginLeft="10dp"
                         android:layout_gravity="center"
@@ -147,7 +146,7 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:text="Month"
+
                         android:id="@+id/t_month"
                         android:layout_gravity="center"
                         android:textColor="@color/color_grey"
@@ -163,12 +162,11 @@
                         android:layout_width="wrap_content"
                         android:text="Year"
                         android:layout_gravity="center"
-                        android:textColor="@color/color_grey"
+                        android:textColor="@color/white"
                         android:layout_height="wrap_content" />
                     <TextView
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:text="Year"
                         android:id="@+id/t_year"
                         android:layout_marginLeft="10dp"
                         android:layout_gravity="center"
@@ -193,7 +191,6 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:text="Year"
                         android:layout_gravity="center"
                         android:id="@+id/txt_onlyYear"
                         android:textColor="@color/color_grey"
@@ -216,7 +213,6 @@
                     <TextView
                         android:layout_width="0dp"
                         android:layout_weight="1"
-                        android:text="Till"
                         android:id="@+id/txt_tillDate"
                         android:layout_gravity="center"
                         android:textColor="@color/color_grey"

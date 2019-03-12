@@ -21,14 +21,12 @@ public class ReportActivity_Dailog extends AppCompatActivity implements ReportFr
         ReportFragment reportFragment=new ReportFragment();
         FragmentManager fragmentManager=getSupportFragmentManager();
         FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+
         Bundle b=new Bundle();
         b.putString("DayBook","DayBook");
         reportFragment.setArguments(b);
         fragmentTransaction.add(R.id.fragment,reportFragment);
         fragmentTransaction.commit();
-
-
-
 
 
     }

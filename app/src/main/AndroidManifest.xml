@@ -69,7 +69,9 @@
         </activity>
         <activity
             android:name=".LonginDetails.SigninActivity"
-            android:theme="@style/CustomThem" />
+            android:theme="@style/CustomThem" >
+
+        </activity>
         <activity
             android:name=".vendor_module.VendorActivity"
             android:label="Vendor "
@@ -469,9 +471,9 @@
             android:label="Invocie Details"
             android:parentActivityName=".billing_module.Invoice_History" />
         <activity
-            android:parentActivityName=".billing_module.Invoice_Details"
+            android:name=".billing_module.SelectModeOFPaymnet"
             android:label="@string/PaymentMode"
-            android:name=".billing_module.SelectModeOFPaymnet" />
+            android:parentActivityName=".billing_module.Invoice_Details" />
         <activity
             android:name=".billing_module.Selected_Quotation_History"
             android:label="Quotation  History"
@@ -828,31 +830,32 @@
             android:parentActivityName=".purchase_module.AddPurchaseItem" />
         <activity android:name=".Billing_paidAmountSuccess" />
         <activity
+            android:name=".billing_module.DuePayment_BankDeatils"
             android:label="@string/ToBankAccount"
-            android:parentActivityName=".billing_module.SelectModeOFPaymnet"
-            android:name=".billing_module.DuePayment_BankDeatils" />
+            android:parentActivityName=".billing_module.SelectModeOFPaymnet" />
         <activity
+            android:name=".billing_module.Due_paymnetEmi"
             android:label="@string/EMI"
-            android:theme="@style/AppProduct"
             android:parentActivityName=".billing_module.SelectModeOFPaymnet"
-            android:name=".billing_module.Due_paymnetEmi" />
+            android:theme="@style/AppProduct" />
         <activity
+            android:name=".billing_module.DuePayment_ChequeDeatils"
             android:label="@string/ChequePayment"
-            android:theme="@style/AppProduct"
             android:parentActivityName=".billing_module.SelectModeOFPaymnet"
-            android:name=".billing_module.DuePayment_ChequeDeatils" />
+            android:theme="@style/AppProduct" />
         <activity
+            android:name=".billing_module.GetBhimDetails_AddRemaiming"
             android:label="BHIM"
-            android:parentActivityName=".billing_module.SelectModeOFPaymnet"
-            android:name=".billing_module.GetBhimDetails_AddRemaiming" />
+            android:parentActivityName=".billing_module.SelectModeOFPaymnet" />
         <activity
+            android:name=".billing_module.DuePayment_BhimDetails"
             android:label="BHIM"
-            android:parentActivityName=".billing_module.SelectModeOFPaymnet"
-            android:name=".billing_module.DuePayment_BhimDetails" />
+            android:parentActivityName=".billing_module.SelectModeOFPaymnet" />
         <activity
-            android:parentActivityName=".billing_module.SelectModeOFPaymnet"
+            android:name=".billing_module.DuePayment_Paytm"
             android:label="Paytm"
-            android:name=".billing_module.DuePayment_Paytm"></activity>
+            android:parentActivityName=".billing_module.SelectModeOFPaymnet" />
+        <activity android:name=".LonginDetails.LoginTestActivity"></activity>
     </application>
 
 </manifest>

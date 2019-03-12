@@ -1,6 +1,7 @@
 package com.inevitablesol.www.shopmanagement.report;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Report_Purchase extends AppCompatActivity implements WEBAPI {
@@ -48,7 +50,7 @@ public class Report_Purchase extends AppCompatActivity implements WEBAPI {
     private ArrayList<Purchaserecord> purchaserecords;
     private RecyclerView recyclerView;
     private Report_PurchaseAdapter purchaseReportAdapter;
-
+    private ImageView imgPurchaseDownload;
     private  TextView txt_totalBalnce;
     private  TextView txt_totalAmount;
 
@@ -70,9 +72,17 @@ public class Report_Purchase extends AppCompatActivity implements WEBAPI {
                 showDate();
             }
         });
-        Date dt = new Date();
-        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
-        currentDateTimeString = dateFormat.format(dt);
+        currentDate = (TextView) findViewById(R.id.bill_curruntDate);
+        currentDateTimeString = new SimpleDateFormat("MMMM", Locale.getDefault()).format(new Date());
+        currentDate.setText(currentDateTimeString);
+
+        imgPurchaseDownload = (ImageView) findViewById(R.id.sale_download_product);
+        imgPurchaseDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Report_Purchase.this,ReportActivity_Dailog.class));
+            }
+        });
         getReportByPurchase();
     }
 

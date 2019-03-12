@@ -27,6 +27,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:text="Month"
+                android:id="@+id/bill_curruntDate"
                 android:textColor="@color/color_grey"
                 android:layout_gravity="center"
                 android:layout_height="wrap_content" />
