@@ -58,42 +58,451 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:text="Tax Rate"
+                android:text="Tax Rate    %"
                 android:textColor="@color/color_grey"
-                android:layout_height="wrap_content" />
-
+                android:layout_height="wrap_content"
+                android:textAlignment="center"/>
+            <include layout="@layout/view_vertical_line"></include>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="Taxable value"
                 android:textColor="@color/color_grey"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textAlignment="center"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="CGST"
                 android:textColor="@color/red"
+                android:textAlignment="center"
                 android:layout_height="wrap_content" />
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="SGST"
                 android:textColor="@color/color_grey"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textAlignment="center"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:text="IGST"
                 android:textColor="@color/green"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textAlignment="center"/>
 
         </LinearLayout>
         <include layout="@layout/view_line"></include>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:padding="10dp"
+                />
+            <include layout="@layout/view_vertical_line"></include>
+
+            <TextView
+                android:id="@+id/tex_value_0"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/cgst_0"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/sgst_0"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/igst_0"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="0.25"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                />
+            <include layout="@layout/view_vertical_line"></include>
+
+            <TextView
+                android:id="@+id/tex_value_0.25"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/cgst_0.25"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/sgst_0.25"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/igst_0.25"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="3"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                />
+            <include layout="@layout/view_vertical_line"></include>
+
+            <TextView
+                android:id="@+id/tex_value_3"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/cgst_3"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/sgst_3"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/igst_3"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="5"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                />
+            <include layout="@layout/view_vertical_line"></include>
+
+            <TextView
+                android:id="@+id/tex_value_5"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/cgst_5"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/sgst_5"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/igst_5"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="12"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                />
+            <include layout="@layout/view_vertical_line"></include>
+
+            <TextView
+                android:id="@+id/tex_value_12"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/cgst_12"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/sgst_12"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/igst_12"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="18"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                />
+            <include layout="@layout/view_vertical_line"></include>
+
+            <TextView
+                android:id="@+id/tex_value_18"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/cgst_18"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/sgst_18"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/igst_18"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="28"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                />
+            <include layout="@layout/view_vertical_line"></include>
+
+            <TextView
+                android:id="@+id/tax_value_28"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/cgst_28"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/sgst_28"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+
+            <TextView
+                android:id="@+id/igst_28"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/color_grey"
+                />
+        </LinearLayout>
+        <include layout="@layout/view_line"></include>
+    </LinearLayout>
 
 
 

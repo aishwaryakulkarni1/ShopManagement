@@ -245,7 +245,7 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:text="Exapanse Report"
+                    android:text="Expense Report"
                     android:gravity="center"
                     android:layout_margin="5dp"
 

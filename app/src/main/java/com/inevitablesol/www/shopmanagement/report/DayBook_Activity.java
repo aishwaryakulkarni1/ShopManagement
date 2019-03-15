@@ -60,10 +60,10 @@ public class DayBook_Activity extends AppCompatActivity implements ReportFragmen
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-       super.onCreate(savedInstanceState);
-       // getLayoutInflater().inflate(R.layout.activity_day_book,frameLayout);
+        super.onCreate(savedInstanceState);
+        // getLayoutInflater().inflate(R.layout.activity_day_book,frameLayout);
 
-         setContentView(R.layout.activity_day_book);
+        setContentView(R.layout.activity_day_book);
 
         datePicker = (ImageView) findViewById(R.id.date_billingDate);
         datePicker.setOnClickListener(new View.OnClickListener() {
@@ -179,16 +179,16 @@ public class DayBook_Activity extends AppCompatActivity implements ReportFragmen
                                     JSONObject jsonObject1=jsonArray.getJSONObject(0);
 
 
-                                      txt_totalInvoice.setText(jsonObject1.getString("total_invoice"));
-                                      txt_totalSale.setText(jsonObject1.getString("total_sale"));
-                                      txt_balanceDue.setText(jsonObject1.getString("balance_due"));
-                                       txt_amntReceived.setText(jsonObject1.getString("paid"));
+                                    txt_totalInvoice.setText(jsonObject1.getString("total_invoice"));
+                                    txt_totalSale.setText(jsonObject1.getString("total_sale"));
+                                    txt_balanceDue.setText(jsonObject1.getString("balance_due"));
+                                    txt_amntReceived.setText(jsonObject1.getString("paid"));
                                     JSONObject jsonObject2=jsonArray.getJSONObject(2);
 
-                                      txt_p_totalInvoice.setText(jsonObject2.getString("total_invoice"));
-                                       txt_p_totalSale.setText(jsonObject2.getString("total_sale"));
-                                      txt_p_balanceDue.setText(jsonObject2.getString("balance_due"));
-                                     txt_p_amntReceived.setText(jsonObject2.getString("paid"));
+                                    txt_p_totalInvoice.setText(jsonObject2.getString("total_invoice"));
+                                    txt_p_totalSale.setText(jsonObject2.getString("total_sale"));
+                                    txt_p_balanceDue.setText(jsonObject2.getString("balance_due"));
+                                    txt_p_amntReceived.setText(jsonObject2.getString("paid"));
                                     JSONObject jsonObject3=jsonArray.getJSONObject(1);
 
 

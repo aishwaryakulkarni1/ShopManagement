@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class Report_Sale extends AppCompatActivity implements WEBAPI
@@ -55,7 +54,6 @@ public class Report_Sale extends AppCompatActivity implements WEBAPI
     private SaleAdater saleAdapter;
     private  TextView txt_totalBalnce;
     private  TextView txt_totalAmount;
-
     private ImageView imgSaleDownload;
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -78,11 +76,6 @@ public class Report_Sale extends AppCompatActivity implements WEBAPI
                 showDate();
             }
         });
-
-        currentDate = (TextView) findViewById(R.id.bill_curruntDate);
-        currentDateTimeString = new SimpleDateFormat("MMMM", Locale.getDefault()).format(new Date());
-        currentDate.setText(currentDateTimeString);
-
         imgSaleDownload = (ImageView) findViewById(R.id.sale_download_product);
         imgSaleDownload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +83,10 @@ public class Report_Sale extends AppCompatActivity implements WEBAPI
                 startActivity(new Intent(Report_Sale.this,ReportActivity_Dailog.class));
             }
         });
-
+        Date dt = new Date();
+        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+        currentDateTimeString = dateFormat.format(dt);
+        currentDate.setText(currentDateTimeString);
         getReportBySale();
     }
 
@@ -107,7 +103,7 @@ public class Report_Sale extends AppCompatActivity implements WEBAPI
                 calendar.set(Calendar.DAY_OF_MONTH, 1);
 
 
-                SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 currentDateTimeString= dateFormat.format(calendar.getTime());
 
                 currentDate.setText(dateFormat.format(calendar.getTime()));
@@ -173,8 +169,8 @@ public class Report_Sale extends AppCompatActivity implements WEBAPI
                                 recyclerView.setLayoutManager(layoutManager);
                                 recyclerView.setAdapter(saleAdapter);
 
-                                   txt_totalAmount.setText(String.valueOf(saleAdapter.getTotalAmount()));
-                                   txt_totalBalnce.setText(String.valueOf(saleAdapter.totalBalance));
+                                txt_totalAmount.setText(String.valueOf(saleAdapter.getTotalAmount()));
+                                txt_totalBalnce.setText(String.valueOf(saleAdapter.totalBalance));
 
 
 

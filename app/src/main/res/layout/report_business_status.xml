@@ -75,11 +75,13 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="1dp"
                     android:layout_weight="1"
                     android:text="Type"
                     android:textColor="@color/color_grey"
                     android:layout_height="wrap_content" />
+
+                <include layout="@layout/view_vertical_line"></include>
 
                 <TextView
                     android:layout_width="0dp"
@@ -103,8 +105,187 @@
                     android:text="Total Amnt"
                     android:textColor="@color/color_grey"
                     android:layout_height="wrap_content" />
+
             </LinearLayout>
 
+
+            <include layout="@layout/view_line"></include>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:layout_width="85dp"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="5dp"
+                        android:layout_marginLeft="5dp"
+                        android:text="Purchase"
+                        android:textColor="@color/color_grey" />
+                    <include layout="@layout/view_vertical_line"></include>
+
+                    <TextView
+                        android:id="@+id/p_tax_value"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="P Value"
+                        android:textColor="@color/color_grey" />
+
+                    <TextView
+                        android:id="@+id/p_tot_gst"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="P gst"
+                        android:textColor="@color/color_grey" />
+
+                    <TextView
+                        android:id="@+id/p_tot_amt"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="P amt"
+                        android:textColor="@color/color_grey" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="85dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="10dp"
+                        android:text="Sale"
+                        android:textColor="@color/color_grey" />
+
+                    <include layout="@layout/view_vertical_line"></include>
+
+                    <TextView
+                        android:id="@+id/s_tax_value"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Sale Value"
+                        android:textColor="@color/color_grey" />
+
+                    <TextView
+                        android:id="@+id/s_tot_gst"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="S gst"
+                        android:textColor="@color/color_grey" />
+
+                    <TextView
+                        android:id="@+id/s_tot_amt"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="S amt"
+                        android:textColor="@color/color_grey" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:layout_width="85dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_height="wrap_content"
+                        android:text="Expense"
+                        android:layout_marginTop="10dp"
+                        android:textColor="@color/color_grey" />
+
+                    <include layout="@layout/view_vertical_line"></include>
+
+                    <TextView
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="E Value"
+                        android:id="@+id/e_tax_value"
+                        android:textColor="@color/color_grey" />
+
+                    <TextView
+                        android:id="@+id/e_tot_gst"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="E gst"
+                        android:textColor="@color/color_grey" />
+
+                    <TextView
+                        android:id="@+id/e_tot_amt"
+                        android:layout_width="90dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="E amt"
+                        android:textColor="@color/color_grey" />
+
+                </LinearLayout>
+
+
+                <include layout="@layout/view_line"></include>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/Total"
+                    android:textColor="@color/red" />
+                <include layout="@layout/view_vertical_line"></include>
+
+                <TextView
+                    android:id="@+id/total_tax_value"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Total Tax Value"
+                    android:textColor="@color/color_grey"/>
+
+                <TextView
+                    android:id="@+id/tot_gst"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Total gst"
+                    android:textColor="@color/color_grey" />
+
+                <TextView
+                    android:id="@+id/tot_amt"
+                    android:layout_width="90dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Total Amt"
+                    android:textColor="@color/color_grey" />
+
+
+            </LinearLayout>
             <include layout="@layout/view_line"></include>
 
             <LinearLayout
@@ -113,76 +294,49 @@
                 android:layout_margin="5dp"
                 android:layout_height="wrap_content">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:text="Purchase"
-                    android:textColor="@color/color_grey"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:layout_width="65dp"
+                        android:textColor="@color/green"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/profit"
+                        android:layout_height="wrap_content" />
 
-                <TextView
+                    <TextView
+                        android:id="@+id/profit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="Profit"
+                        android:textColor="@color/color_grey"/>
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:text="Sale"
-                    android:layout_marginTop="10dp"
-                    android:textColor="@color/color_grey"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:layout_width="65dp"
+                        android:textColor="@color/red"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/loss"
+                        android:layout_height="wrap_content" />
 
+                    <TextView
+                        android:id="@+id/loss"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="Loss"
+                        android:textColor="@color/color_grey"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:text="Expense"
-                    android:layout_marginTop="10dp"
-                    android:textColor="@color/color_grey"
-                    android:layout_height="wrap_content" />
-
-                <include layout="@layout/view_line"></include>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/red"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/Total"
-                    android:layout_height="wrap_content" />
-
-
-
-                <include layout="@layout/view_line"></include>
-
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_margin="5dp"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/green"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/profit"
-                    android:layout_height="wrap_content" />
-
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/red"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/loss"
-                    android:layout_height="wrap_content" />
-
-
-
+                </LinearLayout>
 
             </LinearLayout>
 

@@ -163,8 +163,8 @@
     <string name="TotalGST">Total GST</string>
     <string name="Quaility">Output Laibility</string>
     <string name="Input">Input Laibility</string>
-    <string name="profit">Profit</string>
-    <string name="loss">Loss</string>
+    <string name="profit">Profit:</string>
+    <string name="loss">Loss:</string>
     <string name="BusinessStatus">Business Status</string>
     <string name="TotalExpenses">Total Expenses</string>
 

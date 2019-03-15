@@ -44,136 +44,219 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:background="@drawable/rectangleshape"
-            android:layout_height="match_parent">
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Sale Report"
-                android:textColor="@color/color_grey"
-                android:layout_height="wrap_content" />
+                android:textColor="@color/color_grey" />
+
             <include layout="@layout/view_line"></include>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:textColor="@color/color_grey"
-                    android:layout_margin="5dp"
-                    android:text="Total Number of Invocies"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/color_grey"
-                    android:layout_margin="5dp"
+                    <LinearLayout
+                        android:layout_width="178dp"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
-                    android:text="@string/TotalSale"
-                    android:layout_height="wrap_content" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="Total Number of Invocies:"
+                            android:textColor="@color/colorPrimary" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/color_grey"
-                    android:text="Total Discount"
-                    android:layout_margin="5dp"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
 
-                    android:layout_height="wrap_content" />
+                            android:text="Total Selling Price:"
+                            android:textColor="@color/colorPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="Total Discount:"
+                            android:textColor="@color/colorPrimary" />
 
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/color_grey"
-                    android:text="Taxable Value"
-                    android:layout_margin="5dp"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="Taxable Value:"
+                            android:textColor="@color/colorPrimary" />
 
-                    android:layout_height="wrap_content" />
+                        <include layout="@layout/view_line"></include>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="Total Sales:"
+
+                            android:textColor="@color/colorPrimary" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="193dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/s_total_invoice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="Total Number of Invocies"
+                            android:textColor="@color/color_grey" />
+
+                        <TextView
+                            android:id="@+id/s_total_sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="Total Selling Price:"
+                            android:textColor="@color/color_grey" />
+
+                        <TextView
+                            android:id="@+id/s_total_discount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="Total Discount"
+
+                            android:textColor="@color/color_grey" />
+
+
+                        <TextView
+                            android:id="@+id/taxable_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="Taxable Value"
+
+                            android:textColor="@color/color_grey" />
+
+                        <include layout="@layout/view_line"></include>
+
+                        <TextView
+                            android:id="@+id/total_sale"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="Total Sales"
+
+                            android:textColor="@color/color_grey" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
 
                 <include layout="@layout/view_line"></include>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/color_grey"
-                    android:text="Total Sale"
-                    android:layout_margin="5dp"
-
-                    android:layout_height="wrap_content" />
-
-                <include layout="@layout/view_line"></include>
-
-
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:text="Purchase Report"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:textColor="@color/color_grey"
-                    android:layout_height="wrap_content" />
+                    android:text="Purchase Report"
+                    android:textColor="@color/color_grey" />
 
                 <include layout="@layout/view_line"></include>
 
-
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:textColor="@color/color_grey"
-                    android:layout_margin="5dp"
+                    android:layout_height="wrap_content">
 
-                    android:text="Total Number of Invocies"
-                    android:layout_height="wrap_content" />
+                    <LinearLayout
+                        android:layout_width="178dp"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/color_grey"
-                    android:layout_margin="5dp"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="Total Number of Invocies"
+                            android:textColor="@color/colorPrimary"/>
 
-                    android:text="@string/TotalSale"
-                    android:layout_height="wrap_content" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/color_grey"
-                    android:text="Total Discount"
-                    android:layout_margin="5dp"
+                            android:text="Total Selling Price"
+                            android:textColor="@color/colorPrimary" />
 
-                    android:layout_height="wrap_content" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="Total Discount"
 
+                            android:textColor="@color/colorPrimary" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/color_grey"
-                    android:text="Taxable Value"
-                    android:layout_margin="5dp"
+                        <include layout="@layout/view_line"></include>
 
-                    android:layout_height="wrap_content" />
+                    </LinearLayout>
 
-                <include layout="@layout/view_line"></include>
+                    <LinearLayout
+                        android:layout_width="193dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/color_grey"
-                    android:text="Total Sale"
-                    android:layout_margin="5dp"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/p_total_invoice"
+                            android:layout_margin="5dp"
+                            android:text="Total Number of Invocies"
+                            android:textColor="@color/color_grey" />
 
-                    android:layout_height="wrap_content" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/p_total_sp"
+                            android:layout_margin="5dp"
+                            android:text="Total Selling Price"
+                            android:textColor="@color/color_grey" />
 
-                <include layout="@layout/view_line"></include>
+                        <TextView
+                            android:id="@+id/p_total_discount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="Total Discount"
 
+                            android:textColor="@color/color_grey" />
 
+                        <include layout="@layout/view_line"></include>
 
+                    </LinearLayout>
 
-
-
+                </LinearLayout>
 
 
 
 
             </LinearLayout>
-
 
 
         </LinearLayout>
