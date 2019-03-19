@@ -39,9 +39,13 @@ import java.util.Map;
 
 public class Profit_and_loss extends AppCompatActivity
 {
-    private String total_taxable,TotalGST, Total_Amount ;
-    private String TotalSelling,TotalSgst,totalsale;
-    private String total_Exp_taxable,Exp_TotalGST,Total_Exp_Amount;
+    public String total_taxable,TotalGST, Total_Amount ;
+    public String TotalSelling,TotalSgst,totalsale;
+    public String total_Exp_taxable,Exp_TotalGST,Total_Exp_Amount;
+
+    public float p_taxable,s_taxable,e_taxable,totalTax=0;
+    public float p_gst,s_gst, e_gst,totalGst = 0;
+    public float p_amt,s_amt,e_amt,totalAmt =0;
 
 
     private ImageView imgPLDownload;
@@ -67,26 +71,6 @@ public class Profit_and_loss extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report_business_status);
 
-        currentDate = (TextView) findViewById(R.id.bill_curruntDate);
-        currentDateTime = new SimpleDateFormat("MMMM", Locale.getDefault()).format(new Date());
-        currentDate.setText(currentDateTime);
-
-        datePicker = (ImageView) findViewById(R.id.date_billingDate);
-        datePicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDate();
-            }
-        });
-
-        imgPLDownload = (ImageView) findViewById(R.id.sale_download_product);
-        imgPLDownload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(Profit_and_loss.this,ReportActivity_Dailog.class));
-            }
-        });
-
         globalPool= (GlobalPool) this.getApplicationContext();
         p_tax_value = (TextView) findViewById(R.id.p_tax_value);
         p_tot_gst = (TextView) findViewById(R.id.p_tot_gst);
@@ -105,6 +89,32 @@ public class Profit_and_loss extends AppCompatActivity
         tot_amt = (TextView) findViewById(R.id.tot_amt);
         profit = (TextView) findViewById(R.id.profit);
         loss = (TextView) findViewById(R.id.loss);
+
+        currentDate = (TextView) findViewById(R.id.bill_curruntDate);
+        currentDateTime = new SimpleDateFormat("MMMM", Locale.getDefault()).format(new Date());
+        currentDate.setText(currentDateTime);
+        //getProfitLoss_Status();
+
+        datePicker = (ImageView) findViewById(R.id.date_billingDate);
+        datePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDate();
+            }
+        });
+
+
+
+
+        imgPLDownload = (ImageView) findViewById(R.id.sale_download_product);
+        imgPLDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Profit_and_loss.this,ReportActivity_Dailog.class));
+            }
+        });
+
+
 
     }
 
@@ -138,11 +148,14 @@ public class Profit_and_loss extends AppCompatActivity
 
                 getProfitLoss_Status();
 
+                getCalculations();
+
             }
         }).show();
+
     }
 
-    private void getProfitLoss_Status(){
+    public void getProfitLoss_Status(){
 
 
         Log.d(TAG,"getProfitLossStatus");
@@ -160,9 +173,9 @@ public class Profit_and_loss extends AppCompatActivity
 
                         try {
                             JSONObject jsonObject = new JSONObject(response);
-                            /*String message = jsonObject.getString("Data Available");
-                            if(message.equalsIgnoreCase("Data Available"))
-                            {*/
+                            String msg = jsonObject.getString("message");
+                            if(msg.equalsIgnoreCase("Data Available"))
+                            {
                                 JSONArray jsonArray = jsonObject.getJSONArray("PurchaseProfit");
 
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(0);
@@ -174,11 +187,17 @@ public class Profit_and_loss extends AppCompatActivity
                                 p_tax_value.setText(total_taxable);
                                 p_tot_gst.setText(TotalGST);
                                 p_tot_amt.setText(Total_Amount);
-                           /* }
+
+                                p_taxable = Float.parseFloat(total_taxable);
+                                p_gst = Float.parseFloat(TotalGST);
+                                p_amt = Float.parseFloat(Total_Amount);
+                            }
                             else
                             {
                                 Toast.makeText(getApplicationContext(),"Data Unavailable",Toast.LENGTH_LONG).show();
-                            }*/
+                            }
+
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -218,6 +237,8 @@ public class Profit_and_loss extends AppCompatActivity
         RequestQueue requestQueue1 = Volley.newRequestQueue(getApplicationContext());
         requestQueue1.add(req1);
 
+        Log.d(total_taxable,"2total_taxable");
+
  //Sale
         final StringRequest req2 = new StringRequest(Request.Method.POST,urlJsonArray2,
                 new Response.Listener<String>()
@@ -230,9 +251,10 @@ public class Profit_and_loss extends AppCompatActivity
 
                         try {
                             JSONObject jsonObject = new JSONObject(response);
-                            /*String message = jsonObject.getString("Data Available");
-                            if(message.equalsIgnoreCase("Data Available"))
-                            {*/
+                            String msg = jsonObject.getString("message");
+                            Log.d("My Message", msg.toString());
+                            if(msg.equalsIgnoreCase("Data Available"))
+                            {
                                 JSONArray jsonArray = jsonObject.getJSONArray("salereprofit");
 
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(0);
@@ -244,11 +266,15 @@ public class Profit_and_loss extends AppCompatActivity
                                 s_tot_gst.setText(TotalSgst);
                                 s_tot_amt.setText(totalsale);
 
-//                            }
-//                            else
-//                            {
-//                                Toast.makeText(getApplicationContext(),"Data Unavailable",Toast.LENGTH_LONG).show();
-//                            }
+                            s_taxable = Float.parseFloat(TotalSelling);
+                            s_gst = Float.parseFloat(TotalSgst);
+                            s_amt = Float.parseFloat(totalsale);
+
+                           }
+                           else
+                           {
+                                Toast.makeText(getApplicationContext(),"Data Unavailable",Toast.LENGTH_LONG).show();
+                           }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -301,9 +327,9 @@ public class Profit_and_loss extends AppCompatActivity
 
                         try {
                             JSONObject jsonObject = new JSONObject(response);
-                            /*String message = jsonObject.getString("Data Available");
+                            String message = jsonObject.getString("message");
                             if(message.equalsIgnoreCase("Data Available"))
-                            {*/
+                            {
                                 JSONArray jsonArray = jsonObject.getJSONArray("ExpenseProfit");
 
                                 JSONObject jsonObject1 = jsonArray.getJSONObject(0);
@@ -314,11 +340,16 @@ public class Profit_and_loss extends AppCompatActivity
                                 e_tax_value.setText(total_Exp_taxable);
                                 e_tot_gst.setText(Exp_TotalGST);
                                 e_tot_amt.setText(Total_Exp_Amount);
-                           /* }
+
+                            e_taxable = Float.parseFloat(total_Exp_taxable);
+                            e_gst = Float.parseFloat(Exp_TotalGST);
+                            e_amt = Float.parseFloat(Total_Exp_Amount);
+
+                            }
                             else
                             {
                                 Toast.makeText(getApplicationContext(), "Data Unavailable", Toast.LENGTH_LONG).show();
-                            }*/
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -354,31 +385,31 @@ public class Profit_and_loss extends AppCompatActivity
 
                 return param;
             }
+
         };
         RequestQueue requestQueue3 = Volley.newRequestQueue(getApplicationContext());
         requestQueue3.add(req3);
 
 
-        Log.d(total_taxable,"::total_taxable");
-        //Calcultions
 
-        int p_taxable = Integer.parseInt(total_taxable);
-        int s_taxable = Integer.parseInt(TotalSelling);
-        int e_taxable = Integer.parseInt(total_Exp_taxable);
-        int totalTax = p_taxable+s_taxable+e_taxable;
-        total_tax_value.setText(String.valueOf(totalTax));
 
-        int p_gst = Integer.parseInt(TotalGST);
-        int s_gst = Integer.parseInt(TotalSgst);
-        int e_gst = Integer.parseInt(Exp_TotalGST);
-        int totalGst = p_gst + s_gst + e_gst;
-        tot_gst.setText(String.valueOf(totalGst));
+    }
 
-        int p_amt = Integer.parseInt(Total_Amount);
-        int s_amt = Integer.parseInt(totalsale);
-        int e_amt = Integer.parseInt(Total_Exp_Amount);
-        int totalAmt = p_amt + s_amt +e_amt;
-        tot_amt.setText(String.valueOf(totalAmt));
+    public void getCalculations(){
 
+        Log.d(TAG,"getCalculations");
+
+            totalTax = p_taxable+s_taxable+e_taxable;
+            String sumTax = Float.toString(totalTax);
+
+            totalGst = p_gst + s_gst + e_gst;
+            String sumGst = Float.toString(totalGst);
+
+            totalAmt = p_amt + s_amt +e_amt;
+            String  sumAmt = Float.toString(totalAmt);
+
+        total_tax_value.setText(sumTax);
+        tot_gst.setText(sumGst);
+            tot_amt.setText(sumAmt);
     }
 }

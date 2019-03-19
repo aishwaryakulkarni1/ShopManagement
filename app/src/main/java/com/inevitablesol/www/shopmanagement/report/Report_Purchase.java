@@ -72,8 +72,9 @@ public class Report_Purchase extends AppCompatActivity implements WEBAPI {
                 showDate();
             }
         });
-        currentDate = (TextView) findViewById(R.id.bill_curruntDate);
-        currentDateTimeString = new SimpleDateFormat("MMMM", Locale.getDefault()).format(new Date());
+        Date dt = new Date();
+        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+        currentDateTimeString = dateFormat.format(dt);
         currentDate.setText(currentDateTimeString);
 
         imgPurchaseDownload = (ImageView) findViewById(R.id.sale_download_product);

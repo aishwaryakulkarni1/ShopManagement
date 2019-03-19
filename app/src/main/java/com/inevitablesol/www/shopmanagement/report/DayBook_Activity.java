@@ -128,7 +128,7 @@ public class DayBook_Activity extends AppCompatActivity implements ReportFragmen
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                Date date1 = myCalendar.getTime();
+
 
                 updateDate(myCalendar);
             }
@@ -183,12 +183,12 @@ public class DayBook_Activity extends AppCompatActivity implements ReportFragmen
                                     txt_totalSale.setText(jsonObject1.getString("total_sale"));
                                     txt_balanceDue.setText(jsonObject1.getString("balance_due"));
                                     txt_amntReceived.setText(jsonObject1.getString("paid"));
-                                    JSONObject jsonObject2=jsonArray.getJSONObject(2);
+                                    /*JSONObject jsonObject2=jsonArray.getJSONObject(2);
 
                                     txt_p_totalInvoice.setText(jsonObject2.getString("total_invoice"));
                                     txt_p_totalSale.setText(jsonObject2.getString("total_sale"));
                                     txt_p_balanceDue.setText(jsonObject2.getString("balance_due"));
-                                    txt_p_amntReceived.setText(jsonObject2.getString("paid"));
+                                    txt_p_amntReceived.setText(jsonObject2.getString("paid"));*/
                                     JSONObject jsonObject3=jsonArray.getJSONObject(1);
 
 

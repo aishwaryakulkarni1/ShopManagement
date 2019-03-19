@@ -114,7 +114,7 @@
             <include layout="@layout/view_vertical_line"></include>
 
             <TextView
-                android:id="@+id/tex_value_0"
+                android:id="@+id/tax_value_0"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -173,7 +173,7 @@
             <include layout="@layout/view_vertical_line"></include>
 
             <TextView
-                android:id="@+id/tex_value_0.25"
+                android:id="@+id/tax_value_025"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -183,7 +183,7 @@
                 />
 
             <TextView
-                android:id="@+id/cgst_0.25"
+                android:id="@+id/cgst_025"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -193,7 +193,7 @@
                 />
 
             <TextView
-                android:id="@+id/sgst_0.25"
+                android:id="@+id/sgst_025"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -203,7 +203,7 @@
                 />
 
             <TextView
-                android:id="@+id/igst_0.25"
+                android:id="@+id/igst_025"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -230,7 +230,7 @@
             <include layout="@layout/view_vertical_line"></include>
 
             <TextView
-                android:id="@+id/tex_value_3"
+                android:id="@+id/tax_value_3"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -288,7 +288,7 @@
             <include layout="@layout/view_vertical_line"></include>
 
             <TextView
-                android:id="@+id/tex_value_5"
+                android:id="@+id/tax_value_5"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -346,7 +346,7 @@
             <include layout="@layout/view_vertical_line"></include>
 
             <TextView
-                android:id="@+id/tex_value_12"
+                android:id="@+id/tax_value_12"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -404,7 +404,7 @@
             <include layout="@layout/view_vertical_line"></include>
 
             <TextView
-                android:id="@+id/tex_value_18"
+                android:id="@+id/tax_value_18"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"

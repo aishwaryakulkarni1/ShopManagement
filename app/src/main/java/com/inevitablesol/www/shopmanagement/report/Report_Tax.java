@@ -84,8 +84,9 @@ public class Report_Tax extends AppCompatActivity
                 showDate();
             }
         });
-        currentDate = (TextView) findViewById(R.id.bill_curruntDate);
-        currentDateTimeString = new SimpleDateFormat("MMMM", Locale.getDefault()).format(new Date());
+        Date dt = new Date();
+        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+        currentDateTimeString = dateFormat.format(dt);
         currentDate.setText(currentDateTimeString);
 
         imgTaxDownload = (ImageView) findViewById(R.id.sale_download_product);
