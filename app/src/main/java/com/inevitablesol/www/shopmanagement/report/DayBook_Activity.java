@@ -90,8 +90,11 @@ public class DayBook_Activity extends AppCompatActivity implements ReportFragmen
         txt_e_totalInvoice=(TextView)findViewById(R.id.e_total_invoice);
 
         //Current Date Display
-        currentDateTimeString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        Date dt = new Date();
+        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+        currentDateTimeString = dateFormat.format(dt);
         currentDate.setText(currentDateTimeString);
+        getTotalSale_Status();
 
         globalPool= (GlobalPool) this.getApplicationContext();
 
@@ -106,7 +109,7 @@ public class DayBook_Activity extends AppCompatActivity implements ReportFragmen
             }
         });
 
-        getTotalSale_Status();
+
     }
 
 
@@ -176,29 +179,33 @@ public class DayBook_Activity extends AppCompatActivity implements ReportFragmen
                                 try
                                 {
                                     JSONArray jsonArray=jsonObject.getJSONArray("records");
-                                    JSONObject jsonObject1=jsonArray.getJSONObject(0);
-
-
-                                    txt_totalInvoice.setText(jsonObject1.getString("total_invoice"));
-                                    txt_totalSale.setText(jsonObject1.getString("total_sale"));
-                                    txt_balanceDue.setText(jsonObject1.getString("balance_due"));
-                                    txt_amntReceived.setText(jsonObject1.getString("paid"));
-                                    /*JSONObject jsonObject2=jsonArray.getJSONObject(2);
-
-                                    txt_p_totalInvoice.setText(jsonObject2.getString("total_invoice"));
-                                    txt_p_totalSale.setText(jsonObject2.getString("total_sale"));
-                                    txt_p_balanceDue.setText(jsonObject2.getString("balance_due"));
-                                    txt_p_amntReceived.setText(jsonObject2.getString("paid"));*/
-                                    JSONObject jsonObject3=jsonArray.getJSONObject(1);
-
-
-                                    txt_e_totalInvoice.setText(jsonObject3.getString("total_invoice"));
-                                    txt_e_totalSale.setText(jsonObject3.getString("total_sale"));
-                                    txt_e_balanceDue.setText(jsonObject3.getString("balance_due"));
-                                    txt_e_amntReceived.setText(jsonObject3.getString("paid"));
 
 
 
+                                    JSONObject jsonObject1 = jsonArray.getJSONObject(0);
+                                    if (jsonObject1.length()!=0) {
+                                        txt_totalInvoice.setText(jsonObject1.getString("total_invoice"));
+                                        txt_totalSale.setText(jsonObject1.getString("total_sale"));
+                                        txt_balanceDue.setText(jsonObject1.getString("balance_due"));
+                                        txt_amntReceived.setText(jsonObject1.getString("paid"));
+                                    }
+
+
+                                    JSONObject jsonObject3 = jsonArray.getJSONObject(1);
+                                    if(jsonObject3.length()!=0) {
+                                        txt_e_totalInvoice.setText(jsonObject3.getString("total_invoice"));
+                                        txt_e_totalSale.setText(jsonObject3.getString("total_sale"));
+                                        txt_e_balanceDue.setText(jsonObject3.getString("balance_due"));
+                                        txt_e_amntReceived.setText(jsonObject3.getString("paid"));
+                                    }
+
+                                    JSONObject jsonObject2 = jsonArray.getJSONObject(2);
+                                    if(jsonObject2.length()!=0) {
+                                        txt_p_totalInvoice.setText(jsonObject2.getString("total_invoice"));
+                                        txt_p_totalSale.setText(jsonObject2.getString("total_sale"));
+                                        txt_p_balanceDue.setText(jsonObject2.getString("balance_due"));
+                                        txt_p_amntReceived.setText(jsonObject2.getString("paid"));
+                                    }
                                 } catch (NumberFormatException e)
                                 {
                                     loading.dismiss();
