@@ -34,6 +34,7 @@
                android:paddingRight="10dp"
                android:background="@color/color_grey"
                android:layout_marginRight="10dp"
+
                android:layout_height="wrap_content" />
 
 
@@ -75,7 +76,7 @@
                 <EditText android:id="@+id/input_productname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
+                    android:digits="abcdefghijklmnopqrstuvwxyz1234567890"
                     android:drawableRight="@drawable/search"
                     android:hint="Product Name" />
             </android.support.design.widget.TextInputLayout>

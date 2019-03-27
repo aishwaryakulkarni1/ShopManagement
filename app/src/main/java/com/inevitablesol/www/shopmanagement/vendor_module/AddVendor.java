@@ -281,7 +281,7 @@ public class AddVendor extends AppCompatActivity implements View.OnClickListener
 
     private void saveDetails()
     {
-        GST_validation gst_validation=new GST_validation();
+        //GST_validation gst_validation=new GST_validation();
         String name=et_vname.getText().toString().trim();
          String email=et_vemail.getText().toString().trim();
          String v_phone=et_vphone.getText().toString().trim();
@@ -294,7 +294,7 @@ public class AddVendor extends AppCompatActivity implements View.OnClickListener
         String gst_In=et_gst_number.getText().toString().trim();
         String  stateCode=sp_supplier.getSelectedItem().toString().trim();
 
-        if(_isNotEmty())
+        /*if(_isNotEmty())
         {
             if(linearLayout.getVisibility()==View.GONE)
             {
@@ -350,13 +350,45 @@ public class AddVendor extends AppCompatActivity implements View.OnClickListener
         }else
         {
             Toast.makeText(getApplicationContext()," Please Check  Required Field",Toast.LENGTH_LONG).show();
+        }*/
+
+//gst validation from add customer
+        if(!name.isEmpty()  && v_phone.length()== 10)
+        {
+            Log.d(TAG, "getData: IF");
+            if(linearLayout.getVisibility()==View.VISIBLE)
+            {
+                if(GST_validation.isValid_Gst(gst_In))
+                {
+                    addDetails(name,email,v_phone,v_address,v_company,v_contactPersonName,gst_In,gstStatus,stateCode);
+                    return;
+                }else
+                {
+                    et_gst_number.setError("Invalid GST");
+                    Toast.makeText(getApplication(),"Please Add Valid Gst",Toast.LENGTH_LONG).show();
+                }
+
+
+            }else
+            {
+                if(isvalidEmail || isvalidPhone)
+                {
+                    addDetails(name,email,v_phone,v_address,v_company,v_contactPersonName,gstStatus,gst_In,stateCode);
+
+                }else if(!isvalidPhone)
+                {
+                    Toast.makeText(getApplicationContext(),"Please Add Valid Phone",Toast.LENGTH_LONG).show();
+
+                }else
+                {
+                    Toast.makeText(getApplicationContext(),"Please Add Valid Email",Toast.LENGTH_LONG).show();
+                }
+            }
+
+        }else
+        {
+            Toast.makeText(getApplicationContext()," Please Check  Required Field",Toast.LENGTH_LONG).show();
         }
-
-
-
-
-
-
 
     }
 

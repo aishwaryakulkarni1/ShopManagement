@@ -89,13 +89,7 @@ public class Import_VendorList extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-
-
-
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com/uc?export=download&id=1gd2IDYIsSwswi32_DRmFJdSCFpUlP-hS")));
-
-
-
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com/file/d/1gd2IDYIsSwswi32_DRmFJdSCFpUlP-hS/view")));
             }
         });
         ExportID=(AppCompatButton)findViewById(R.id.exportStateId);

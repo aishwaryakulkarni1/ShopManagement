@@ -524,7 +524,7 @@
     <string name="BARCODE">Barcode :</string>
     <string name="BARCODESCAN"> Proceed  \n Barcode Scan</string>
     <string name="PurchaseProduct">purchase product</string>
-    <string name="scannProductBarcode">Scann Product Barcode</string>
+    <string name="scannProductBarcode">Scan Product Barcode</string>
     <string name="DownloadSampleFile">Download sample File to Import Vendor details</string>
     <string name="DownloadSampleFileCustomer">Download sample File to Import Customer Details</string>
     <string name="DownloadSampleFileItem">Download Sample File to Import Item</string>

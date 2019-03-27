@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -48,6 +49,8 @@ public class BarcodeProduct extends AppCompatActivity {
     private static final String TAG = "BarcodeProduct";
     @BindView(R.id.edt_barcode)
     AppCompatEditText barcodeSearch;
+    @BindView(R.id.close_button)
+    ImageView iv_close;
 
     GlobalPool globalPool;
     @BindView(R.id.tx_item_bar_code)
@@ -148,6 +151,7 @@ public class BarcodeProduct extends AppCompatActivity {
     private TextView txItename;
     private  TextView txProductName;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -186,6 +190,13 @@ public class BarcodeProduct extends AppCompatActivity {
                 }, 1000);
 
 
+            }
+        });
+
+        iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                barcodeSearch.getText().clear();
             }
         });
 
