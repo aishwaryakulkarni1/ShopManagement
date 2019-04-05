@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -124,18 +125,18 @@ public class PrintBill extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_print_bill);
-        //appCompatButton = (AppCompatButton) findViewById(R.id.bt_print);
+        appCompatButton = (AppCompatButton) findViewById(R.id.bt_print);
 //        editText = (EditText) findViewById(R.id.et_print);
 
         sqlDataBase = new SqlDataBase(this);
 
-//        appCompatButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                print();
-//            }
-//        });
+        appCompatButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+                print();
+            }
+        });
 
         Date dt = new Date();
         java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MMM/yy");
@@ -295,6 +296,9 @@ public class PrintBill extends AppCompatActivity
                 ptr = new Printer(setup, outSt, inSta);
 
                 EnterText();
+                // SAMPLE PDF CODE TO DOWNLOAD THE PDF
+
+
             } catch (Exception e)
             {
                 e.printStackTrace();
@@ -590,12 +594,13 @@ public class PrintBill extends AppCompatActivity
         private ProgressDialog mpd;
         @Override
         public void onPreExecute(){
-            mpd = new ProgressDialog(PrintBill.this);
+            mpd = new ProgressDialog(context);
             mpd.setMessage(getString(R.string.actDiscovery_msg_starting_device));
-            mpd.setCancelable(false);
-            mpd.setCanceledOnTouchOutside(false);
+                mpd.setIndeterminate(true);
+            mpd.setCancelable(true);
+            //mpd.setCanceledOnTouchOutside(false);
             mpd.show();
-            mbBleStatusBefore = mBT.isEnabled();
+            //mbBleStatusBefore = mBT.isEnabled();
         }
         @Override
         protected Integer doInBackground(String... arg0)

@@ -558,40 +558,40 @@
 
             </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_margin="5dp"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_margin="5dp"-->
+            <!--android:gravity="center"-->
+            <!--android:orientation="vertical"-->
+            <!--android:layout_height="wrap_content">-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:text="@string/ShareInvoiceDetails"
-                android:textColor="@color/color_grey"
-                android:layout_height="wrap_content" />
-            <include layout="@layout/view_line"></include>
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:text="@string/ShareInvoiceDetails"-->
+                <!--android:textColor="@color/color_grey"-->
+                <!--android:layout_height="wrap_content" />-->
+            <!--<include layout="@layout/view_line"></include>-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:gravity="center"
-                android:layout_height="wrap_content">
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:gravity="center"-->
+                <!--android:layout_height="wrap_content">-->
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:src="@drawable/gmail"
-                    android:layout_height="wrap_content" />
+                <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:src="@drawable/gmail"-->
+                    <!--android:layout_height="wrap_content" />-->
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:src="@drawable/whatsapp"
-                    android:layout_height="wrap_content" />
+                <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:src="@drawable/whatsapp"-->
+                    <!--android:layout_height="wrap_content" />-->
 
-            </LinearLayout>
+            <!--</LinearLayout>-->
 
 
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
         <View
             android:layout_width="match_parent"
@@ -615,10 +615,12 @@
                 android:layout_height="wrap_content" />
 
         </LinearLayout>
+        <include layout="@layout/view_line"></include>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_gravity="end"
+            android:layout_margin="10dp"
             android:layout_marginBottom="50dp"
             android:layout_height="match_parent">
 

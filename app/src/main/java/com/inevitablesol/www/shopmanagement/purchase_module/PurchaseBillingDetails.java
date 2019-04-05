@@ -1,5 +1,6 @@
 package com.inevitablesol.www.shopmanagement.purchase_module;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +17,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -33,6 +36,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.inevitablesol.www.shopmanagement.sql_lite.SqlDataBase;
+import com.inevitablesol.www.shopmanagement.wishList.Add_WishList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +45,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -108,6 +113,9 @@ public class PurchaseBillingDetails extends AppCompatActivity implements View.On
     private String message1;
     private String smsDue;
     private String userMobile;
+    private LinearLayout addReminder;
+    private TextView txt_remainder;
+    private ImageView img_remainder;
 
 
     @Override
@@ -160,6 +168,10 @@ public class PurchaseBillingDetails extends AppCompatActivity implements View.On
         ly_sgst.setOnClickListener(this);
         ly_igst.setOnClickListener(this);
          ly_cgst.setOnClickListener(this);
+
+        addReminder = (LinearLayout) findViewById(R.id.linear_addReminder);
+        txt_remainder = (TextView) findViewById(R.id.wish_setRemainder);
+        img_remainder = (ImageView) findViewById(R.id.wish_img_remainder);
 
         savetoDb=(AppCompatButton)findViewById(R.id.purchase_saveTodb);
          savetoDb.setOnClickListener(this);
@@ -318,14 +330,60 @@ public class PurchaseBillingDetails extends AppCompatActivity implements View.On
                       {
                           try
                           {
-                              double paidAmopint=Double.parseDouble(s.toString());
-                              String  t_amount=txt_totalAmount.getText().toString().trim();
-                              double dueBalance=Double.parseDouble(t_amount)-paidAmopint;
-                              et_balanceDue.setText(String.valueOf(dueBalance));
+                              String t_amount;
+                              double paidAmopint=0.0;
+                              double dueBalance=0.0;
+                              if(s.toString().length()>0)
+                              {
+                                  t_amount = txt_totalAmount.getText().toString().trim();
+                                  paidAmopint = Double.parseDouble(s.toString());
+                                  if (paidAmopint<=Double.parseDouble(t_amount))
+                                  {
+                                      dueBalance = Double.parseDouble(t_amount) - paidAmopint;
+                                      et_balanceDue.setText(String.valueOf(String.format("%.2f",dueBalance)));
+                                      //REMINDER VISIBILITY
+                                      if (dueBalance > 0.0 && paidAmopint>=0.0 && paidAmopint<Double.parseDouble(t_amount))
+                                      {
+                                          addReminder.setVisibility(View.VISIBLE);
 
-                          } catch(Exception e)
+                                          img_remainder.setOnClickListener(new View.OnClickListener() {
+                                              @Override
+                                              public void onClick(View v) {
+                                                  changeWishDateReminder(txt_remainder);
+                                              }
+                                          });
+                                      } else {
+                                          addReminder.setVisibility(View.INVISIBLE);
+                                      }
+                                  }else
+                                  {
+                                      Toast.makeText(context, "Invalid Amount", Toast.LENGTH_SHORT).show();
+                                  }
+
+                              }else
+                              {
+                                  t_amount = txt_totalAmount.getText().toString().trim();
+                                  dueBalance = Double.parseDouble(t_amount) - 0.0;
+                                  et_balanceDue.setText(String.valueOf(String.format("%.2f",dueBalance)));
+                                  //REMINDER VISIBILITY
+                                  if (dueBalance > 0.0 && paidAmopint>=0.0 && paidAmopint<Double.parseDouble(t_amount))
+                                  {
+                                      addReminder.setVisibility(View.VISIBLE);
+
+                                      img_remainder.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+                                              changeWishDateReminder(txt_remainder);
+                                          }
+                                      });
+                                  } else {
+                                      addReminder.setVisibility(View.INVISIBLE);
+                                  }
+                              }
+
+                          } catch (Exception e)
                           {
-
+                              Log.d(TAG, "afterTextChanged:"+e);
                           }
 
                       }
@@ -368,6 +426,31 @@ public class PurchaseBillingDetails extends AppCompatActivity implements View.On
 
 
 
+
+    }
+
+    private void changeWishDateReminder(final TextView txt){
+
+        final Calendar myCalendar = Calendar.getInstance();
+
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+                myCalendar.set(Calendar.YEAR,year);
+                myCalendar.set(Calendar.MONTH,month);
+                myCalendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+
+                SimpleDateFormat date1 = new SimpleDateFormat("yyyy-MM-dd");
+                String currentDateTimeString = date1.format(myCalendar.getTime());
+                txt.setText(currentDateTimeString);
+
+            }
+        };
+
+        new DatePickerDialog(PurchaseBillingDetails.this, date, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
     }
 
@@ -467,7 +550,6 @@ public class PurchaseBillingDetails extends AppCompatActivity implements View.On
                 {
                     e.printStackTrace();
                 }
-
         }
 
     }
@@ -526,7 +608,6 @@ public class PurchaseBillingDetails extends AppCompatActivity implements View.On
               jsonObject.put("sgst", sgst);
               jsonObject.put("igst", igst);
               jsonObject.put("created_by", userId);
-
 
               Log.d(TAG, "getParams: " + jsonObject);
 

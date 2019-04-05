@@ -66,7 +66,7 @@ public class Import_Customer extends AppCompatActivity
             public void onClick(View v)
             {
 
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com/uc?export=download&id=1vRM9nTjamo-u-lcTq4DvjdUgxUqBWgaY")));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://drive.google.com/file/d/1vRM9nTjamo-u-lcTq4DvjdUgxUqBWgaY/view")));
 
 
 

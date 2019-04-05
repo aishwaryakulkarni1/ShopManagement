@@ -34,7 +34,7 @@ public class HighestPurchaseDay extends AppCompatActivity implements WEBAPI
 {
 
 
-    private static final String TAG = "HighestSellingDay";
+    private static final String TAG = "HighestPurchaseDay";
     private ProgressDialog loading;
     private GlobalPool globalPool;
     private String startDate;

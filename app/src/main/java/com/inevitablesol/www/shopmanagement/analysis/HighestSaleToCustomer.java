@@ -33,7 +33,7 @@ import java.util.Map;
 public class HighestSaleToCustomer extends AppCompatActivity
 {
 
-    private static final String TAG = "HighestSellingDay";
+    private static final String TAG = "HighestSaleToCustomer";
     private ProgressDialog loading;
     private GlobalPool globalPool;
     private String startDate;

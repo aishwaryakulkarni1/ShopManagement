@@ -146,7 +146,7 @@ public class Billing_ProceedToPayment extends AppCompatActivity implements View.
 
 
     //textView For total
-    private  TextView  txt_customerAmount;
+    private  TextView  txt_customerAmount,txt_custamountPaid;
 
     private LinearLayout linearLayout_cashPayment;
     private  LinearLayout linearLayout_RazorPay,linearLayout_paytm,linearLayout_bhimApp;
@@ -163,6 +163,7 @@ public class Billing_ProceedToPayment extends AppCompatActivity implements View.
         setContentView(R.layout.a_billing_new_page);
         txt_cname=(TextView)findViewById(R.id.txt_BcustName);
         txt_customerAmount=(TextView)findViewById(R.id.txt_custTotal);
+        txt_custamountPaid=(TextView) findViewById(R.id.txt_amountPaid);
         sqlDataBase=new SqlDataBase(context);
          globalPool = (GlobalPool) this.getApplication();
 
@@ -216,6 +217,7 @@ public class Billing_ProceedToPayment extends AppCompatActivity implements View.
             total_gst=intent.getStringExtra("totalGst");
             txt_cname.setText(custName);
             txt_customerAmount.setText(totalAmount);
+            txt_custamountPaid.setText(amount_paid);
         }
 
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
@@ -711,9 +713,9 @@ public class Billing_ProceedToPayment extends AppCompatActivity implements View.
                             intent.putExtra("totalgst",total_gst);
                             intent.putExtra("otherCharges",other_charges);
                             intent.putExtra("shippingCharges",shipping_charges);
+                            intent.putExtra("totalAmount",totalAmount);
                             intent.putExtra("amountpaid",amount_paid);
                             intent.putExtra("balanceDue",balanceDue);
-                            intent.putExtra("totalAmount",totalAmount);
                             intent.putExtra("modeofPayment",ModeofPayment);
                             intent.putExtra("tranId",invId);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

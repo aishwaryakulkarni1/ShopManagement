@@ -58,7 +58,10 @@ public class DatePickFragments extends DialogFragment  implements DatePickerDial
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
-        return new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) this, year, month, day);
+        DatePickerDialog dialog = new DatePickerDialog(getActivity(), this, year, month, day);
+        dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+
+        return dialog;
     }
 
 
@@ -69,7 +72,6 @@ public class DatePickFragments extends DialogFragment  implements DatePickerDial
         myCalendar.set(Calendar.YEAR, year);
         myCalendar.set(Calendar.MONTH, month);
         myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        Date date1 = myCalendar.getTime();
 
         //updateDate(myCalendar);
         java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");

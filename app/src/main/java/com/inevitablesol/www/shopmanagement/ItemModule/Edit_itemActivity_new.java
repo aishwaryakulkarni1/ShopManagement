@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -33,6 +34,7 @@ import com.inevitablesol.www.shopmanagement.sql_lite.SqlDataBase;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,7 +87,7 @@ public class Edit_itemActivity_new extends AppCompatActivity  implements View.On
     private  TextView txt_itemBarcode;
     private  TextView txt_mUnit;
     private  TextView txt_unit;
-    private String shortCut;
+    //private String shortCut;
 
 
     @Override
@@ -123,6 +125,8 @@ public class Edit_itemActivity_new extends AppCompatActivity  implements View.On
         txt_unit=(TextView)findViewById(R.id.txt_unit);
         txt_itemBarcode=(TextView)findViewById(R.id.txt_itembarcode);
         sub_unit=(Spinner)findViewById(R.id.sub_measurementUnit);
+
+
 
          //txt_discount=(TextView)findViewById(R.id//.add_dis);
         et_gstPercentege=(Spinner)findViewById(R.id.et_gstpercentage);
@@ -421,8 +425,22 @@ public class Edit_itemActivity_new extends AppCompatActivity  implements View.On
         {
 
         }
+        try {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            int height = displayMetrics.heightPixels;
+            int width = displayMetrics.widthPixels;
+            Field popup = Spinner.class.getDeclaredField("mPopup");
+            popup.setAccessible(true);
 
+            // Get private mPopup member variable and try cast to ListPopupWindow
+            //android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(sub_unit);
+            // Set popupWindow height to 500px
+            //popupWindow.setHeight((int)height/2);
 
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
 
         Intent intent = getIntent();
         if (intent.hasExtra("itemId"))
@@ -469,39 +487,60 @@ public class Edit_itemActivity_new extends AppCompatActivity  implements View.On
             txt_mUnit.setText(stockInfo.getMunit());
             txt_unit.setText(stockInfo.getUnit());
 
-            try {
-                String unit=stockInfo.getMunit();
-
-                if(unit.equalsIgnoreCase("Unit"))
-                {
-                    adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
-                            R.array.unit, android.R.layout.simple_spinner_item);
-
-                }else if(unit.equalsIgnoreCase("Gram"))
-                {
-                    adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
-                            R.array.gram, android.R.layout.simple_spinner_item);
-
-                }else if(unit.equalsIgnoreCase("liter"))
-                {
-                    adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
-                            R.array.liter, android.R.layout.simple_spinner_item);
-
-                }
-                else if(unit.equalsIgnoreCase("meter"))
-                {
-                    adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
-                            R.array.meter, android.R.layout.simple_spinner_item);
-
-                }
-                adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                sub_unit.setAdapter(adapter2);
-            } catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-
-
+//            try {
+//                String unit=stockInfo.getMunit();
+//
+//                if(unit.equalsIgnoreCase("Unit"))
+//                {
+//                    adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
+//                            R.array.unit, android.R.layout.simple_spinner_item);
+//
+//                }else if(unit.equalsIgnoreCase("Gram"))
+//                {
+//                    adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
+//                            R.array.gram, android.R.layout.simple_spinner_item);
+//
+//                }else if(unit.equalsIgnoreCase("liter"))
+//                {
+//                    adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
+//                            R.array.liter, android.R.layout.simple_spinner_item);
+//
+//                }
+//                else if(unit.equalsIgnoreCase("meter"))
+//                {
+//                    adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
+//                            R.array.meter, android.R.layout.simple_spinner_item);
+//
+//                }
+//                adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                sub_unit.setAdapter(adapter2);
+//
+//                sub_unit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                    @Override
+//                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                        //sub_unit.getSelectedItem().toString();
+//                        Object item = parent.getItemAtPosition(position);
+//                        if (item != null) {
+//
+//                            Toast.makeText(Edit_itemActivity_new.this, item.toString(),
+//                                    Toast.LENGTH_SHORT).show();
+//                        }
+//                        Toast.makeText(Edit_itemActivity_new.this, "Selected",
+//                                Toast.LENGTH_SHORT).show();
+//                    }
+//
+//                    @Override
+//                    public void onNothingSelected(AdapterView<?> parent) {
+//
+//                    }
+//                });
+//
+//            } catch (Exception e)
+//            {
+//                e.printStackTrace();
+//            }
+//
+//
         } else
         {
             Toast.makeText(this, "Data Not Available", Toast.LENGTH_SHORT).show();
@@ -514,15 +553,15 @@ public class Edit_itemActivity_new extends AppCompatActivity  implements View.On
     public void addToStock(final String unitprice, final String discount, final String stock_qty, final String totalAmount, final String price)
     {
 
-        String  unit= sub_unit.getSelectedItem().toString().trim();
-        try {
-            shortCut=unit.substring(unit.indexOf("(")+1,unit.indexOf(")"));
-            Log.d(TAG, "AddToCart: Short cut"+shortCut);
-        } catch (Exception e)
-        {
-            shortCut=unit;
-            e.printStackTrace();
-        }
+        //String  unit= sub_unit.getSelectedItem().toString().trim();
+//        try {
+//            shortCut=unit.substring(unit.indexOf("(")+1,unit.indexOf(")"));
+//            Log.d(TAG, "AddToCart: Short cut"+shortCut);
+//        } catch (Exception e)
+//        {
+//            shortCut=unit;
+//            e.printStackTrace();
+//        }
         final String gstpercentage = et_gstPercentege.getSelectedItem().toString().trim();
         final ProgressDialog loading = ProgressDialog.show(this, "Loading....", "Please wait...", false, false);
 
@@ -578,9 +617,9 @@ public class Edit_itemActivity_new extends AppCompatActivity  implements View.On
                // params.put("mrp", input_mrp.getText().toString());
                 params.put("gst",gstpercentage);
                 params.put("discPrice",totalAmount);
-                params.put("shortCut",shortCut);
+                //params.put("shortCut",shortCut);
                 params.put("discPercent",et_disPer.getText().toString());
-                params.put("unit",sub_unit.getSelectedItem().toString());
+                //params.put("unit",sub_unit.getSelectedItem().toString());
                 Log.d("EDITSTOCK", params.toString());
                 return params;
 

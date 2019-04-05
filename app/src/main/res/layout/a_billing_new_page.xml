@@ -67,6 +67,20 @@
 
                             <TextView
                                 android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/AmountPaid"
+                                android:textColor="@color/white"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:textSize="20sp"
+                                android:layout_marginRight="10dp"
+                                android:textColor="@color/white"
+                                android:id="@+id/txt_amountPaid"
+                                android:text=""
+                                android:layout_height="wrap_content"
+                                />
+                            <TextView
+                                android:layout_width="wrap_content"
                                 android:text="@string/Total"
                                 android:textColor="@color/white"
                                 android:layout_height="wrap_content" />

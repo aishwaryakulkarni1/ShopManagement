@@ -772,7 +772,6 @@ public class Add_WishList extends AppCompatActivity implements View.OnClickListe
 
     private void updateDateReminder(Calendar myCalendar, TextView txt) {
         java.text.SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        ;
         String currentDateTimeString = dateFormat.format(myCalendar.getTime());
         txt.setText(currentDateTimeString);
 

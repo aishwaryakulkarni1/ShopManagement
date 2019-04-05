@@ -25,11 +25,11 @@
         <!--android:layout_below="@+id/actMain_tv_device_info"-->
         <!--android:layout_height="wrap_content" />-->
 
-    <!--<android.support.v7.widget.AppCompatButton-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:id="@+id/bt_print"-->
-        <!--android:text="Print"-->
-        <!--android:layout_below="@+id/et_print"-->
-        <!--android:layout_height="wrap_content" />-->
+    <android.support.v7.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:id="@+id/bt_print"
+        android:text="Print"
+        android:layout_below="@+id/actMain_tv_device_info"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

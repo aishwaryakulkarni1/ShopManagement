@@ -151,28 +151,28 @@ public class AddPurchaseDetails extends AppCompatActivity implements View.OnClic
 
           tx_itembarcode=(TextView)findViewById(R.id.tx_item_bar_code);
           tx_measurementUnit=(TextView)findViewById(R.id.tx_measurmentUnit);
-          sub_unit=(Spinner)findViewById(R.id.sub_measurementUnit);
+          //sub_unit=(Spinner)findViewById(R.id.sub_measurementUnit);
          // tx_measurementUnit.setText("gram");
 
 
 
-        sub_unit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            /**
-             * Called when a new item was selected (in the Spinner)
-             */
-            public void onItemSelected(AdapterView<?> parent,
-                                       View view, int pos, long id)
-            {
-
-                Log.d(TAG, "onItemSelected: "+pos);
-                Log.d(TAG, "onItemSelected: "+sub_unit.getSelectedItem().toString());
-            }
-
-            public void onNothingSelected(AdapterView parent)
-            {
-                // Do nothing.
-            }
-        });
+//        sub_unit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            /**
+//             * Called when a new item was selected (in the Spinner)
+//             */
+//            public void onItemSelected(AdapterView<?> parent,
+//                                       View view, int pos, long id)
+//            {
+//
+//                Log.d(TAG, "onItemSelected: "+pos);
+//                Log.d(TAG, "onItemSelected: "+sub_unit.getSelectedItem().toString());
+//            }
+//
+//            public void onNothingSelected(AdapterView parent)
+//            {
+//                // Do nothing.
+//            }
+//        });
 
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
@@ -209,10 +209,12 @@ public class AddPurchaseDetails extends AppCompatActivity implements View.OnClic
             // Get private mPopup member variable and try cast to ListPopupWindow
             android.widget.ListPopupWindow popupWindow = (android.widget.ListPopupWindow) popup.get(s_productType);
             android.widget.ListPopupWindow popupWindow2 = (android.widget.ListPopupWindow) popup.get(s_itemTypem);
+            //android.widget.ListPopupWindow popupWindow3 = (android.widget.ListPopupWindow) popup.get(sub_unit);
 
             // Set popupWindow height to 500px
             popupWindow.setHeight((int)height/2);
             popupWindow2.setHeight((int)height/2);
+            //popupWindow3.setHeight((int)height/2);
         }
         catch (NoClassDefFoundError | ClassCastException | NoSuchFieldException | IllegalAccessException e) {
             // silently fail...
@@ -449,37 +451,37 @@ public class AddPurchaseDetails extends AppCompatActivity implements View.OnClic
                         tx_measurementUnit.setText(jsonObject1.getString("measurement_unit"));
                         tx_itembarcode.setText(jsonObject1.getString("item_barcode"));
 
-                        try {
-                            String unit=jsonObject1.getString("measurement_unit");
-
-                            if(unit.equalsIgnoreCase("Unit"))
-                            {
-                                adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
-                                        R.array.unit, android.R.layout.simple_spinner_item);
-
-                            }else if(unit.equalsIgnoreCase("Gram"))
-                            {
-                                adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
-                                        R.array.gram, android.R.layout.simple_spinner_item);
-
-                            }else if(unit.equalsIgnoreCase("liter"))
-                            {
-                                adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
-                                        R.array.liter, android.R.layout.simple_spinner_item);
-
-                            }
-                            else if(unit.equalsIgnoreCase("meter"))
-                            {
-                                adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
-                                        R.array.meter, android.R.layout.simple_spinner_item);
-
-                            }
-                            adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            sub_unit.setAdapter(adapter2);
-                        } catch (JSONException e)
-                        {
-                            e.printStackTrace();
-                        }
+//                        try {
+//                            String unit=jsonObject1.getString("measurement_unit");
+//
+//                            if(unit.equalsIgnoreCase("Unit"))
+//                            {
+//                                adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
+//                                        R.array.unit, android.R.layout.simple_spinner_item);
+//
+//                            }else if(unit.equalsIgnoreCase("Gram"))
+//                            {
+//                                adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
+//                                        R.array.gram, android.R.layout.simple_spinner_item);
+//
+//                            }else if(unit.equalsIgnoreCase("liter"))
+//                            {
+//                                adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
+//                                        R.array.liter, android.R.layout.simple_spinner_item);
+//
+//                            }
+//                            else if(unit.equalsIgnoreCase("meter"))
+//                            {
+//                                adapter2  = ArrayAdapter.createFromResource(getApplicationContext(),
+//                                        R.array.meter, android.R.layout.simple_spinner_item);
+//
+//                            }
+//                            adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                            sub_unit.setAdapter(adapter2);
+//                        } catch (JSONException e)
+//                        {
+//                            e.printStackTrace();
+//                        }
 
 
                     } else
@@ -732,16 +734,16 @@ public class AddPurchaseDetails extends AppCompatActivity implements View.OnClic
             String measurmentUnit=tx_measurementUnit.getText().toString().trim();
             String unitPrice =   et_unitPrice.getText().toString().trim();
             String qty =         et_quantity.getText().toString().trim();
-            String  unit= sub_unit.getSelectedItem().toString().trim();
-            try {
-                  shortCut=unit.substring(unit.indexOf("(")+1,unit.indexOf(")"));
-                Log.d(TAG, "AddToCart: Short cut"+shortCut);
-            } catch (Exception e)
-            {
-                shortCut=unit;
-
-                e.printStackTrace();
-            }
+//            String  unit= sub_unit.getSelectedItem().toString().trim();
+//            try {
+//                  shortCut=unit.substring(unit.indexOf("(")+1,unit.indexOf(")"));
+//                Log.d(TAG, "AddToCart: Short cut"+shortCut);
+//            } catch (Exception e)
+//            {
+//                shortCut=unit;
+//
+//                e.printStackTrace();
+//            }
             final String gstpercentage = et_gst.getSelectedItem().toString().trim();
 
             //String  gstpercentage=et_gst.getText().toString().trim();
@@ -785,9 +787,9 @@ public class AddPurchaseDetails extends AppCompatActivity implements View.OnClic
                     jsonObject.put("p_orgPrice",unitPrice);
                     jsonObject.put("p_gst",gstpercentage);
                     jsonObject.put("p_mrp",unit_Mrp);
-                    jsonObject.put("shortCut",shortCut);
+                    //jsonObject.put("shortCut",shortCut);
                     jsonObject.put("measurmentUnit",measurmentUnit);
-                    jsonObject.put("unit",unit);
+                    //jsonObject.put("unit",unit);
                     jsonArray.put(i, jsonObject);
 
                     i++;

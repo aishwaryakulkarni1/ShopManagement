@@ -515,43 +515,43 @@
                 </LinearLayout>
 
 
-               <!-- <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_gravity="bottom"
-                    android:gravity="bottom"
-                    android:layout_height="wrap_content">
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_gravity="bottom"-->
+                    <!--android:gravity="bottom"-->
+                    <!--android:layout_height="wrap_content">-->
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:text="Select Unit :"
-                        android:textColor="@color/white"
-                        android:gravity="end"
-                        android:layout_height="wrap_content" />
-
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="2"
-                        android:orientation="horizontal"
-                        android:background="@color/colorPrimary"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_height="wrap_content">
+                    <!--<TextView-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:text="Select Unit :"-->
+                        <!--android:textColor="@color/white"-->
+                        <!--android:gravity="end"-->
+                        <!--android:layout_height="wrap_content" />-->
 
 
-                        <Spinner
-                            android:layout_width="match_parent"
-                            android:id="@+id/sub_measurementUnit"
-                            android:overlapAnchor="true"
-                            android:layout_gravity="center"
-                            android:layout_height="wrap_content">
+                    <!--<LinearLayout-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_weight="2"-->
+                        <!--android:orientation="horizontal"-->
+                        <!--android:background="@color/colorPrimary"-->
+                        <!--android:layout_marginLeft="5dp"-->
+                        <!--android:layout_marginTop="10dp"-->
+                        <!--android:layout_height="wrap_content">-->
 
-                        </Spinner>
 
-                    </LinearLayout>
+                        <!--<Spinner-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:id="@+id/sub_measurementUnit"-->
+                            <!--android:overlapAnchor="true"-->
+                            <!--android:layout_gravity="center"-->
+                            <!--android:layout_height="wrap_content">-->
 
-                </LinearLayout>-->
+                        <!--</Spinner>-->
+
+                    <!--</LinearLayout>-->
+
+                <!--</LinearLayout>-->
 
 
 

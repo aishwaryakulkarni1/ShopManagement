@@ -1,5 +1,6 @@
 package com.inevitablesol.www.shopmanagement.billing_module;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +16,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -31,10 +34,13 @@ import com.inevitablesol.www.shopmanagement.R;
 import com.inevitablesol.www.shopmanagement.WebApi.WebApi;
 import com.inevitablesol.www.shopmanagement.printerClasses.GlobalPool;
 import com.inevitablesol.www.shopmanagement.printerClasses.PrintBill;
+import com.inevitablesol.www.shopmanagement.purchase_module.PurchaseBillingDetails;
 import com.inevitablesol.www.shopmanagement.sql_lite.SqlDataBase;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,6 +85,10 @@ public class CalculateBillingCart extends AppCompatActivity implements View.OnCl
     private SharedPreferences sharedpreferences2;
     private GlobalPool globalPool ;
 
+    private LinearLayout addReminder;
+    private ImageView img_remainder;
+    private TextView txt_remainder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -98,8 +108,8 @@ public class CalculateBillingCart extends AppCompatActivity implements View.OnCl
         et_otherCharge=(TextInputEditText)findViewById(R.id.et_otherCharge);
         et_amountpaid= (TextInputEditText) findViewById(R.id.et_amountPaid);
         et_balanceDue=(TextView)findViewById(R.id.et_balanceDue);
-        print=(AppCompatButton)findViewById(R.id.print_bill);
-        print.setOnClickListener(this);
+        //print=(AppCompatButton)findViewById(R.id.print_bill);
+       // print.setOnClickListener(this);
         linear_shippingCharges=(LinearLayout)findViewById(R.id.linear_shippingStatus);
         linear_otherCharges=(LinearLayout)findViewById(R.id.linear_otherStatus);
         linear_gst=(LinearLayout)findViewById(R.id.linear_gst);
@@ -111,6 +121,10 @@ public class CalculateBillingCart extends AppCompatActivity implements View.OnCl
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         sharedpreferences2 = getSharedPreferences(MySETTINGS, Context.MODE_PRIVATE);
         dbname = (sharedpreferences.getString("dbname", null));
+
+        addReminder = (LinearLayout) findViewById(R.id.linear_addReminder);
+        img_remainder = (ImageView) findViewById(R.id.wish_img_remainder);
+        txt_remainder = (TextView) findViewById(R.id.wish_setRemainder);
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
@@ -417,16 +431,31 @@ public class CalculateBillingCart extends AppCompatActivity implements View.OnCl
             {
                 try
                 {
+                    String t_amount;
+                    double paidAmopint=0.0;
+                    double dueBalance=0.0;
                     if(s.toString().length()>0)
                     {
-                        String t_amount = txt_totalAmount.getText().toString().trim();
-                        double paidAmopint = Double.parseDouble(s.toString());
+                        t_amount = txt_totalAmount.getText().toString().trim();
+                        paidAmopint = Double.parseDouble(s.toString());
                         if (paidAmopint<=Double.parseDouble(t_amount))
                         {
-
-
-                            double dueBalance = Double.parseDouble(t_amount) - paidAmopint;
+                            dueBalance = Double.parseDouble(t_amount) - paidAmopint;
                             et_balanceDue.setText(String.valueOf(String.format("%.2f",dueBalance)));
+                            //REMINDER VISIBILITY
+                            if (dueBalance > 0.0 && paidAmopint>=0.0 && paidAmopint<Double.parseDouble(t_amount))
+                            {
+                                addReminder.setVisibility(View.VISIBLE);
+
+                                img_remainder.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        changeWishDateReminder(txt_remainder);
+                                    }
+                                });
+                            } else {
+                                addReminder.setVisibility(View.INVISIBLE);
+                            }
                         }else
                         {
                             Toast.makeText(context, "Invalid Amount", Toast.LENGTH_SHORT).show();
@@ -434,12 +463,24 @@ public class CalculateBillingCart extends AppCompatActivity implements View.OnCl
 
                     }else
                     {
-                       String  t_amount = txt_totalAmount.getText().toString().trim();
-                        double dueBalance = Double.parseDouble(t_amount) - 0.0;
+                        t_amount = txt_totalAmount.getText().toString().trim();
+                        dueBalance = Double.parseDouble(t_amount) - 0.0;
                         et_balanceDue.setText(String.valueOf(String.format("%.2f",dueBalance)));
+                        //REMINDER VISIBILITY
+                        if (dueBalance > 0.0 && paidAmopint>=0.0 && paidAmopint<Double.parseDouble(t_amount))
+                        {
+                            addReminder.setVisibility(View.VISIBLE);
+
+                            img_remainder.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    changeWishDateReminder(txt_remainder);
+                                }
+                            });
+                        } else {
+                            addReminder.setVisibility(View.INVISIBLE);
+                        }
                     }
-
-
 
                 } catch (Exception e)
                 {
@@ -448,6 +489,31 @@ public class CalculateBillingCart extends AppCompatActivity implements View.OnCl
 
             }
         });
+
+    }
+
+    private void changeWishDateReminder(final TextView txt){
+
+        final Calendar myCalendar = Calendar.getInstance();
+
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+                myCalendar.set(Calendar.YEAR,year);
+                myCalendar.set(Calendar.MONTH,month);
+                myCalendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+
+                SimpleDateFormat date1 = new SimpleDateFormat("yyyy-MM-dd");
+                String currentDateTimeString = date1.format(myCalendar.getTime());
+                txt.setText(currentDateTimeString);
+
+            }
+        };
+
+        new DatePickerDialog(CalculateBillingCart.this, date, myCalendar
+                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
     }
 
@@ -613,51 +679,51 @@ public class CalculateBillingCart extends AppCompatActivity implements View.OnCl
                       startActivity(intent);
                   }
                 break;
-            case R.id.print_bill:
-                taxablevalue      =txt_taxableValue.getText().toString().trim();
-                cgst              =txt_cgst.getText().toString().trim();
-                sgst              =txt_sgst.getText().toString().trim();
-                igst              =txt_igst.getText().toString().trim();
-                shipping_charge   = et_shippingCharge.getText().toString().trim();
-                other_charge    =et_otherCharge.getText().toString().trim();
-                amountpaid      =et_amountpaid.getText().toString().trim();
-                amountDue       =et_balanceDue.getText().toString().trim();
-                totalAmount=       txt_totalAmount.getText().toString().trim();
-                totalGst            =txt_gst.getText().toString().trim();
-
-                if(amountpaid.isEmpty() && amountpaid.length()==0)
-                {
-                    et_amountpaid.setError("*");
-                }else
-                {
-                    Intent intent = new Intent(this, PrintBill.class);
-                    intent.putExtra("name", custName);
-                    intent.putExtra("email", custmail);
-                    intent.putExtra("phone", custMobile);
-                    intent.putExtra("address", address);
-                    intent.putExtra("custid", cust_Id);
-                    intent.putExtra("h_status", deliver_status);
-                    intent.putExtra("gst", gst_in);
-                    intent.putExtra("supplier", supplier);
-                    intent.putExtra("taxableValue", taxablevalue);
-                    intent.putExtra("cgst", cgst);
-                    intent.putExtra("sgst", sgst);
-                    intent.putExtra("igst", igst);
-                    intent.putExtra("shipping_charge", shipping_charge);
-                    intent.putExtra("other_charge", other_charge);
-                    intent.putExtra("amountpaid", amountpaid);
-                    intent.putExtra("balanceDue", amountDue);
-                    intent.putExtra("totalAmount", totalAmount);
-                    intent.putExtra("totalGst", totalGst);
-                    intent.putExtra("shopName",globalPool.getShopName());
-                    intent.putExtra("shopAddress",globalPool.getShop_address());
-                    intent.putExtra("code",pincode);
-                    intent.putExtra("state",globalPool.getShopNumber());
-
-                  //  intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-                break;
+//            case R.id.print_bill:
+//                taxablevalue      =txt_taxableValue.getText().toString().trim();
+//                cgst              =txt_cgst.getText().toString().trim();
+//                sgst              =txt_sgst.getText().toString().trim();
+//                igst              =txt_igst.getText().toString().trim();
+//                shipping_charge   = et_shippingCharge.getText().toString().trim();
+//                other_charge    =et_otherCharge.getText().toString().trim();
+//                amountpaid      =et_amountpaid.getText().toString().trim();
+//                amountDue       =et_balanceDue.getText().toString().trim();
+//                totalAmount=       txt_totalAmount.getText().toString().trim();
+//                totalGst            =txt_gst.getText().toString().trim();
+//
+//                if(amountpaid.isEmpty() && amountpaid.length()==0)
+//                {
+//                    et_amountpaid.setError("*");
+//                }else
+//                {
+//                    Intent intent = new Intent(this, PrintBill.class);
+//                    intent.putExtra("name", custName);
+//                    intent.putExtra("email", custmail);
+//                    intent.putExtra("phone", custMobile);
+//                    intent.putExtra("address", address);
+//                    intent.putExtra("custid", cust_Id);
+//                    intent.putExtra("h_status", deliver_status);
+//                    intent.putExtra("gst", gst_in);
+//                    intent.putExtra("supplier", supplier);
+//                    intent.putExtra("taxableValue", taxablevalue);
+//                    intent.putExtra("cgst", cgst);
+//                    intent.putExtra("sgst", sgst);
+//                    intent.putExtra("igst", igst);
+//                    intent.putExtra("shipping_charge", shipping_charge);
+//                    intent.putExtra("other_charge", other_charge);
+//                    intent.putExtra("amountpaid", amountpaid);
+//                    intent.putExtra("balanceDue", amountDue);
+//                    intent.putExtra("totalAmount", totalAmount);
+//                    intent.putExtra("totalGst", totalGst);
+//                    intent.putExtra("shopName",globalPool.getShopName());
+//                    intent.putExtra("shopAddress",globalPool.getShop_address());
+//                    intent.putExtra("code",pincode);
+//                    intent.putExtra("state",globalPool.getShopNumber());
+//
+//                  //  intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(intent);
+//                }
+//                break;
 
         }
 
