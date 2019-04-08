@@ -2,6 +2,7 @@ package com.inevitablesol.www.shopmanagement.report;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,13 +11,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.inevitablesol.www.shopmanagement.R;
 import com.inevitablesol.www.shopmanagement.analysis.date.DatePickFragments;
+import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -44,8 +50,10 @@ public class ReportFragment extends Fragment implements DatePickFragments.OnDate
     private static final String TAG = "ReportFragment";
     private FragmentActivity fragmentActivity;
 
-    TextView dispFromDate;
-
+    TextView txt_FromDate,txt_fromMonth,txt_fromYear,txt_tillDate;
+    Button download;
+    RadioButton pdf,xls,total_from,total_month,total_year,till;
+    ImageView fromDate,toDate,month,year,onlyYear;
 
     public ReportFragment() {
         // Required empty public constructor
@@ -96,165 +104,319 @@ public class ReportFragment extends Fragment implements DatePickFragments.OnDate
             tx_title.setText("Day Book Report");
         }
 
-        dispFromDate= (TextView) view.findViewById(R.id.total_fromdate);
-
-        ImageView  datePicker=(ImageView)view.findViewById(R.id.report_imgfromDate);
-
+        txt_FromDate= (TextView) view.findViewById(R.id.total_fromdate);
+        txt_fromMonth=(TextView) view.findViewById(R.id.t_month);
+        txt_fromYear = (TextView) view.findViewById(R.id.txt_onlyYear);
+        txt_tillDate = (TextView) view.findViewById(R.id.txt_tillDate);
 
         //Doing Something
 
+        pdf = (RadioButton) view.findViewById(R.id.pdf);
+        xls = (RadioButton) view.findViewById(R.id.xls);
+        download = (Button) view.findViewById(R.id.total_saleDownload);
 
-       // datePicker = (ImageView)view.findViewById(R.id.report_imgfromDate);
-      /*  datePicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        total_from = (RadioButton) view.findViewById(R.id.total_from);
+        total_month = (RadioButton) view.findViewById(R.id.total_month);
+        total_year = (RadioButton) view.findViewById(R.id.total_year);
+        till = (RadioButton) view.findViewById(R.id.till);
 
-                showDate();
-            }
-        });*/
+        fromDate = (ImageView)view.findViewById(R.id.report_imgfromDate);
+        toDate = (ImageView)view.findViewById(R.id.total_todate_image);
+        month = (ImageView)view.findViewById(R.id.total_imgMonth);
+        onlyYear = (ImageView) view.findViewById(R.id.img_onlyYear);
 
-        ImageView fromDate = (ImageView)view.findViewById(R.id.report_imgfromDate);
+        //FROM TO RADIOBUTTON
+        if(total_from.isChecked()){
+            fromDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                    Log.d(TAG, "onClick: datePicker"+datePickFragments);
 
+                    //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                    datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                    final Calendar myCalendar = Calendar.getInstance();
 
-        fromDate.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
+                    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                              int dayOfMonth) {
+                            // TODO Auto-generated method stub
+                            myCalendar.set(Calendar.YEAR, year);
+                            myCalendar.set(Calendar.MONTH, monthOfYear);
+                            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                            Date date1 = myCalendar.getTime();
+
+                            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                            String currentDateTimeString= dateFormat.format(date1);
+                            txt_FromDate.setText(currentDateTimeString);
+                        }
+
+                    };
+                    Log.d("date", String.valueOf(myCalendar.getTime()));
+                }
+            });
+            toDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                    Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                    datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                    final Calendar myCalendar = Calendar.getInstance();
+                    new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                              int dayOfMonth) {
+                            // TODO Auto-generated method stub
+                            myCalendar.set(Calendar.YEAR, year);
+                            myCalendar.set(Calendar.MONTH, monthOfYear);
+                            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                            Date date1 = myCalendar.getTime();
+
+                            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                            String currentDateTimeString= dateFormat.format(date1);
+                            txt_FromDate.setText(currentDateTimeString);
+                        }
+
+                    };
+                    Log.d("date", String.valueOf(myCalendar.getTime()));
+                }
+            });
+            if(pdf.isChecked())
             {
-                DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
-                Log.d(TAG, "onClick: datePicker"+datePickFragments);
-
-             //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
-                datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
-                final Calendar myCalendar = Calendar.getInstance();
-
-                DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
+                download.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                          int dayOfMonth) {
-                        // TODO Auto-generated method stub
-//                        myCalendar.set(Calendar.YEAR, year);
-//                        myCalendar.set(Calendar.MONTH, monthOfYear);
-//                        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-//                        Date date1 = myCalendar.getTime();
-//
-//
-//                        //Trying something
-//
-//
-//                    //    java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
-//                     //   String currentDateTimeString= dateFormat.format(date1);
-//
-//                        // dispFromDate.setText(currentDateTimeString);
-//
-//                        dispFromDate.setText("Ujwal");
-                        showDate();
+                    public void onClick(View v) {
+
+                        Uri uri = Uri.parse("http://www.google.co.in");
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT,uri);
+                        startActivity(intent);
+                    }
+                });
+            }
+            else if(xls.isChecked()){
+                download.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
 
 
                     }
-
-                };
-
-
-                Log.d("date", String.valueOf(myCalendar.getTime()));
+                });
             }
-        });
-
-        ImageView iv2 = (ImageView)view.findViewById(R.id.total_todate_image);
-        iv2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
-                Log.d(TAG, "onClick: datePicker"+datePickFragments);
-
-                //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
-                datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+            else{
+                Toast.makeText(getContext(),"Please select one option to proceed",Toast.LENGTH_LONG);
             }
-        });
+        }
 
-        ImageView iv3 = (ImageView)view.findViewById(R.id.total_imgMonth);
-        iv3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
-                Log.d(TAG, "onClick: datePicker"+datePickFragments);
+        //MONTH RADIOBUTTON
 
-                //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
-                datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+         else if(total_month.isChecked())
+        {
+            month.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                    Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                    datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+
+                    new YearMonthPickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onYearMonthSet(int year, int month) {
+
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(Calendar.YEAR,year);
+                            calendar.set(Calendar.MONTH,month);
+                            calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                            String currentMonthYear = dateFormat.format(calendar.getTime());
+                            txt_fromMonth.setText(currentMonthYear);
+
+                            calendar.add(Calendar.MONTH,+1);
+                            calendar.add(Calendar.DATE,-1);
+                        }
+                    };
+                }
+            });
+
+            if(pdf.isChecked())
+            {
+                download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Uri uri = Uri.parse("http://www.google.co.in");
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT,uri);
+                        startActivity(intent);
+                    }
+                });
             }
-        });
+            else if(xls.isChecked()){
+                download.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
 
-        ImageView iv4 = (ImageView)view.findViewById(R.id.total_imgYear);
-        iv4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
-                Log.d(TAG, "onClick: datePicker"+datePickFragments);
 
-                //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
-                datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                    }
+                });
             }
-        });
-
-        ImageView iv5 = (ImageView) view.findViewById(R.id.img_onlyYear);
-        iv5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
-                Log.d(TAG, "onClick: datePicker"+datePickFragments);
-
-                //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
-                datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+            else{
+                Toast.makeText(getContext(),"Please select one option to proceed",Toast.LENGTH_LONG);
             }
-        });
+        }
 
-        TextView iv6 = (TextView)view.findViewById(R.id.txt_tillDate);
-        iv6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
-                Log.d(TAG, "onClick: datePicker"+datePickFragments);
+        //year = (ImageView)view.findViewById(R.id.total_imgYear);
 
-                //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
-                datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+        //YEAR RADIOBUTTON
+        else if (total_year.isChecked()){
+            year.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                    Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                    datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+
+                    new YearMonthPickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onYearMonthSet(int year, int month) {
+
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(Calendar.YEAR,year);
+                            calendar.set(Calendar.MONTH,month);
+                            calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                            String currentMonthYear = dateFormat.format(calendar.getTime());
+                            txt_fromYear.setText(currentMonthYear);
+
+                            calendar.add(Calendar.MONTH,+1);
+                            calendar.add(Calendar.DATE,-1);
+                        }
+                    };
+                }
+            });
+            if(pdf.isChecked())
+            {
+                download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Uri uri = Uri.parse("http://www.google.co.in");
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT,uri);
+                        startActivity(intent);
+                    }
+                });
             }
-        });
+            else if(xls.isChecked()){
+                download.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+
+
+                    }
+                });
+            }
+            else{
+                Toast.makeText(getContext(),"Please select one option to proceed",Toast.LENGTH_LONG);
+            }
+        }
+
+        //TILL RADIO BUTTON
+        else if(till.isChecked()){
+            txt_tillDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                    Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                    datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                    final Calendar myCalendar = Calendar.getInstance();
+                    new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                              int dayOfMonth) {
+                            // TODO Auto-generated method stub
+                            myCalendar.set(Calendar.YEAR, year);
+                            myCalendar.set(Calendar.MONTH, monthOfYear);
+                            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                            Date date1 = myCalendar.getTime();
+
+                            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                            String currentDateTimeString= dateFormat.format(date1);
+                            txt_tillDate.setText(currentDateTimeString);
+                        }
+
+                    };
+                    Log.d("date", String.valueOf(myCalendar.getTime()));
+                }
+            });
+            if(pdf.isChecked())
+            {
+                download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Uri uri = Uri.parse("http://www.google.co.in");
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT,uri);
+                        startActivity(intent);
+                    }
+                });
+            }
+            else if(xls.isChecked()){
+                download.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+
+
+                    }
+                });
+            }
+            else{
+                Toast.makeText(getContext(),"Please select one option to proceed",Toast.LENGTH_LONG);
+            }
+        }
+        else{
+            Toast.makeText(getContext(),"Please select one option to proceed",Toast.LENGTH_LONG);
+        }
 
         return view;
     }
 
-
-    private void showDate() {
-        final Calendar myCalendar = Calendar.getInstance();
-
-        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                // TODO Auto-generated method stub
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, monthOfYear);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                Date date1 = myCalendar.getTime();
-
-                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
-                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
-                dispFromDate.setText(currentDateTimeString);
-
-            }
-
-        };
-
-        new DatePickerDialog(this.context, date, myCalendar
-                .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-
-        Log.d("date", String.valueOf(myCalendar.getTime()));
-
-
-    }
+//    private void show(){
+//        new YearMonthPickerDialog(this, new YearMonthPickerDialog.OnDateSetListener() {
+//            @Override
+//            public void onYearMonthSet(int year, int month)
+//            {
+//                Log.d(TAG, "onYearMonthSet: Year Month"+year+" "+month);
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.set(Calendar.YEAR, year);
+//                calendar.set(Calendar.MONTH, month);
+//                calendar.set(Calendar.DAY_OF_MONTH,1);
+//
+//                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+//                currentDateTime= dateFormat.format(calendar.getTime());
+//
+//                currentDate.setText(dateFormat.format(calendar.getTime()));
+//                // calendar.set(calendar.MONTH,month+1);
+//                Log.d(TAG, "onYearMonthSet: " + dateFormat.format(calendar.getTime()));
+//                calendar.add(Calendar.MONTH,1);
+//                calendar.add(Calendar.DATE,-1);
+//
+//                getProfitLoss_Status();
+//                Log.d(TAG, "onYearMonthSet: "+dateFormat.format(calendar.getTime()));
+//
+//                //calendar.add(Calendar.DATE,-1);
+//
+//                // nextMonth=dateFormat.format(calendar.getTime());
+//
+//                Log.d(TAG, "onYearMonthSet:" + dateFormat.format(calendar.getTime()));
+//            }
+//        }).show();
+//    }
 
 
 

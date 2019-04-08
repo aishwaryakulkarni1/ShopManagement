@@ -590,7 +590,7 @@ public class Sales_ModeOfPayment extends AppCompatActivity implements View.OnCli
         final AppCompatButton download=(AppCompatButton)dialog.findViewById(R.id.total_saleDownload);
         final RadioGroup radioGroup=(RadioGroup)dialog.findViewById(R.id.total_Sale);
         final ImageView imgMonth=(ImageView)dialog.findViewById(R.id.total_imgMonth);
-        final  ImageView imgYear=(ImageView)dialog.findViewById(R.id.total_imgYear);
+        final ImageView imgYear = (ImageView) dialog.findViewById(R.id.total_imgYear);
         final   TextView  txtmonth=(TextView)dialog.findViewById(R.id.t_month);
         final    TextView  txtYear=(TextView)dialog.findViewById(R.id.t_year);
         final   TextView  txtOnlyYear=(TextView)dialog.findViewById(R.id.txt_onlyYear);
