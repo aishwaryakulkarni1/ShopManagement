@@ -1,8 +1,10 @@
 package com.inevitablesol.www.shopmanagement.report;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,14 +17,20 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
 import com.inevitablesol.www.shopmanagement.R;
 import com.inevitablesol.www.shopmanagement.analysis.date.DatePickFragments;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
+import java.io.Console;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -35,25 +43,30 @@ import java.util.Date;
 public class ReportFragment extends Fragment implements DatePickFragments.OnDateSetItem {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String DayBook = "DayBook";
+    private String DayBook;
 
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String mParam1,mParam2,mParam3,mParam4,mParam5,mParam6,mParam7,mParam8;
+//    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
     private  Context context;
 
+    private static final String GET_DAYBOOKREPORT ="http://35.161.99.113:9000/webapi/" ;
+
     private static final String TAG = "ReportFragment";
     private FragmentActivity fragmentActivity;
 
-    TextView txt_FromDate,txt_fromMonth,txt_fromYear,txt_tillDate;
+    TextView txt_FromDate,txt_fromMonth,txt_fromYear,txt_tillDate,txt_toDate;
     Button download;
     RadioButton pdf,xls,total_from,total_month,total_year,till;
-    ImageView fromDate,toDate,month,year,onlyYear;
+    ImageView fromDate,toDate,month,onlyYear;
+
+    SharedPreferences sharedPreferences;
+    public static final String MyPREFERENCES = "MyPrefs" ;
 
     public ReportFragment() {
         // Required empty public constructor
@@ -84,57 +97,74 @@ public class ReportFragment extends Fragment implements DatePickFragments.OnDate
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: ");
-        if (getArguments() != null)
+
+        sharedPreferences = getActivity().getSharedPreferences(MyPREFERENCES,Context.MODE_PRIVATE);
+        Bundle b = getArguments();
+        if (b != null)
         {
-            mParam1 = getArguments().getString(DayBook);
-            Log.d(TAG, "onCreate: mParam"+mParam1);
+            mParam1 = b.getString("DayBook");
+            mParam2 = b.getString("Discount");
+            mParam3 = b.getString("ProfitLoss");
+            mParam4 = b.getString("Sales");
+            mParam5 = b.getString("Purchase");
+            mParam6 = b.getString("Expenses");
+            mParam7 = b.getString("Tax");
+            mParam8 = b.getString("TaxRate");
+
         }
+
+        Log.d(TAG, "onCreate: ");
+
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
         View view =inflater.inflate(R.layout.report_dialog, container, false);
         TextView tx_title= (TextView) view.findViewById(R.id.fm_title);
-        if(mParam1.equalsIgnoreCase("DayBook"))
-        {
-            tx_title.setText("Day Book Report");
-        }
+
 
         txt_FromDate= (TextView) view.findViewById(R.id.total_fromdate);
         txt_fromMonth=(TextView) view.findViewById(R.id.t_month);
         txt_fromYear = (TextView) view.findViewById(R.id.txt_onlyYear);
         txt_tillDate = (TextView) view.findViewById(R.id.txt_tillDate);
-
+        txt_toDate = (TextView) view.findViewById(R.id.total_toDate);
         //Doing Something
 
         pdf = (RadioButton) view.findViewById(R.id.pdf);
         xls = (RadioButton) view.findViewById(R.id.xls);
         download = (Button) view.findViewById(R.id.total_saleDownload);
 
-        total_from = (RadioButton) view.findViewById(R.id.total_from);
-        total_month = (RadioButton) view.findViewById(R.id.total_month);
-        total_year = (RadioButton) view.findViewById(R.id.total_year);
-        till = (RadioButton) view.findViewById(R.id.till);
-
+//        total_from = (RadioButton) view.findViewById(R.id.total_from);
+//        total_month = (RadioButton) view.findViewById(R.id.total_month);
+//        total_year = (RadioButton) view.findViewById(R.id.total_year);
+//        till = (RadioButton) view.findViewById(R.id.till);
+//
         fromDate = (ImageView)view.findViewById(R.id.report_imgfromDate);
         toDate = (ImageView)view.findViewById(R.id.total_todate_image);
         month = (ImageView)view.findViewById(R.id.total_imgMonth);
         onlyYear = (ImageView) view.findViewById(R.id.img_onlyYear);
 
-        //FROM TO RADIOBUTTON
-        if(total_from.isChecked()){
+        final RadioGroup rg1 = (RadioGroup) view.findViewById(R.id.total_SaleRadio);
+        final RadioGroup rg2 = (RadioGroup) view.findViewById(R.id.total_Sale);
+
+        if(("DayBook").equalsIgnoreCase(mParam1)){
+
+            tx_title.setText("Day Book Report");
+
             fromDate.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
+
+                    String fromDateString;
+
                     DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
                     Log.d(TAG, "onClick: datePicker"+datePickFragments);
 
                     //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
-                    datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                    // datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
                     final Calendar myCalendar = Calendar.getInstance();
 
                     DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
@@ -148,24 +178,35 @@ public class ReportFragment extends Fragment implements DatePickFragments.OnDate
                             myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                             Date date1 = myCalendar.getTime();
 
+                            //updateDate(myCalendar);
                             java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
-                            String currentDateTimeString= dateFormat.format(date1);
+                            String currentDateTimeString = dateFormat.format(myCalendar.getTime());
                             txt_FromDate.setText(currentDateTimeString);
+
                         }
 
                     };
-                    Log.d("date", String.valueOf(myCalendar.getTime()));
+
+                    new DatePickerDialog(getContext(),date,
+                            myCalendar.get(Calendar.YEAR),
+                            myCalendar.get(Calendar.MONTH),
+                            myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                 }
             });
+
             toDate.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
                     DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
                     Log.d(TAG, "onClick: datePicker"+datePickFragments);
 
-                    datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                    //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                    //datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+
                     final Calendar myCalendar = Calendar.getInstance();
-                    new DatePickerDialog.OnDateSetListener() {
+
+                    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear,
                                               int dayOfMonth) {
@@ -175,112 +216,51 @@ public class ReportFragment extends Fragment implements DatePickFragments.OnDate
                             myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                             Date date1 = myCalendar.getTime();
 
+                            //updateDate(myCalendar);
                             java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
-                            String currentDateTimeString= dateFormat.format(date1);
-                            txt_FromDate.setText(currentDateTimeString);
+                            String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                            txt_toDate.setText(currentDateTimeString);
+
                         }
 
                     };
-                    Log.d("date", String.valueOf(myCalendar.getTime()));
+
+                    new DatePickerDialog(getContext(),date,
+                            myCalendar.get(Calendar.YEAR),
+                            myCalendar.get(Calendar.MONTH),
+                            myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                 }
             });
-            if(pdf.isChecked())
-            {
-                download.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
 
-                        Uri uri = Uri.parse("http://www.google.co.in");
-                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT,uri);
-                        startActivity(intent);
-                    }
-                });
-            }
-            else if(xls.isChecked()){
-                download.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View v){
-
-
-                    }
-                });
-            }
-            else{
-                Toast.makeText(getContext(),"Please select one option to proceed",Toast.LENGTH_LONG);
-            }
-        }
-
-        //MONTH RADIOBUTTON
-
-         else if(total_month.isChecked())
-        {
             month.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
-                    Log.d(TAG, "onClick: datePicker"+datePickFragments);
-
-                    datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
-
-                    new YearMonthPickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onYearMonthSet(int year, int month) {
-
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.set(Calendar.YEAR,year);
-                            calendar.set(Calendar.MONTH,month);
-                            calendar.set(Calendar.DAY_OF_MONTH,1);
-
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
-                            String currentMonthYear = dateFormat.format(calendar.getTime());
-                            txt_fromMonth.setText(currentMonthYear);
-
-                            calendar.add(Calendar.MONTH,+1);
-                            calendar.add(Calendar.DATE,-1);
-                        }
-                    };
-                }
-            });
-
-            if(pdf.isChecked())
-            {
-                download.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                        Uri uri = Uri.parse("http://www.google.co.in");
-                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT,uri);
-                        startActivity(intent);
+                     YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromMonth.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                          new YearMonthPickerDialog(getActivity(),yd).show();
                     }
                 });
-            }
-            else if(xls.isChecked()){
-                download.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View v){
-
-
-                    }
-                });
-            }
-            else{
-                Toast.makeText(getContext(),"Please select one option to proceed",Toast.LENGTH_LONG);
-            }
-        }
-
-        //year = (ImageView)view.findViewById(R.id.total_imgYear);
-
-        //YEAR RADIOBUTTON
-        else if (total_year.isChecked()){
-            year.setOnClickListener(new View.OnClickListener() {
+            onlyYear.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
-                    Log.d(TAG, "onClick: datePicker"+datePickFragments);
 
-                    datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
-
-                    new YearMonthPickerDialog.OnDateSetListener() {
+                    YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
                         @Override
                         public void onYearMonthSet(int year, int month) {
 
@@ -297,128 +277,2339 @@ public class ReportFragment extends Fragment implements DatePickFragments.OnDate
                             calendar.add(Calendar.DATE,-1);
                         }
                     };
+                    new YearMonthPickerDialog(getActivity(),yd).show();
                 }
             });
-            if(pdf.isChecked())
-            {
-                download.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            Date dt = new Date();
+            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+            String currentDateTimeString = dateFormat.format(dt);
+            txt_tillDate.setText(currentDateTimeString);
 
-                        Uri uri = Uri.parse("http://www.google.co.in");
-                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT,uri);
-                        startActivity(intent);
-                    }
-                });
-            }
-            else if(xls.isChecked()){
-                download.setOnClickListener(new View.OnClickListener(){
-                    @Override
-                    public void onClick(View v){
-
-
-                    }
-                });
-            }
-            else{
-                Toast.makeText(getContext(),"Please select one option to proceed",Toast.LENGTH_LONG);
-            }
-        }
-
-        //TILL RADIO BUTTON
-        else if(till.isChecked()){
-            txt_tillDate.setOnClickListener(new View.OnClickListener() {
+            download.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
-                    Log.d(TAG, "onClick: datePicker"+datePickFragments);
 
-                    datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
-                    final Calendar myCalendar = Calendar.getInstance();
-                    new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                              int dayOfMonth) {
-                            // TODO Auto-generated method stub
-                            myCalendar.set(Calendar.YEAR, year);
-                            myCalendar.set(Calendar.MONTH, monthOfYear);
-                            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                            Date date1 = myCalendar.getTime();
+                    View rootView = inflater.inflate(R.layout.report_dialog, container, false);
+                    int selectedId1 = rg1.getCheckedRadioButtonId();
+                    RadioButton radioButton1 = (RadioButton)rootView.findViewById(selectedId1);
+                    String  fileFormat1   =     radioButton1.getText().toString().trim();
 
-                            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
-                            String currentDateTimeString= dateFormat.format(date1);
-                            txt_tillDate.setText(currentDateTimeString);
+                    int selectedId = rg2.getCheckedRadioButtonId();
+                    RadioButton radioButton = (RadioButton)rootView.findViewById(selectedId);
+                    String  fileFormat   = radioButton.getText().toString().trim();
+
+                    //String Year = txttillDate.getText().toString().trim();
+
+                    Log.d(TAG, "onClick:pdf xls "+fileFormat);
+                    Log.d(TAG, "onClick: from to"+    fileFormat1);
+
+                    if(("From").equalsIgnoreCase(fileFormat1) ){
+
+                        if((".pdf").equalsIgnoreCase(fileFormat)) {
+
+
+                            String dbname = sharedPreferences.getString("dbname","empty");
+                            String fromDateString=txt_FromDate.getText().toString();
+                            String toDateString = txt_toDate.getText().toString();
+                            String month = txt_fromMonth.getText().toString();
+                            String year = txt_fromYear.getText().toString();
+                            String till = txt_tillDate.getText().toString();
+
+                            ArrayList<String> shopInfo = new ArrayList<>();
+
+                            shopInfo.add(sharedPreferences.getString("userId","empty"));
+                            shopInfo.add(sharedPreferences.getString("username","empty"));
+                            shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                            shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                            shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                            shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                            shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                            shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                            shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                            shopInfo.add(sharedPreferences.getString("address","empty"));
+                            shopInfo.add(sharedPreferences.getString("state","empty"));
+                            shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+
+                            String pdfUrl = "http://mhourz-shopmgmt.surge.sh/DayBookReport?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=Yes";
+                            Uri uri = Uri.parse(pdfUrl);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri,"text/html");
+                            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            Log.d("final url:",uri.toString());
                         }
+                        else if ( fileFormat.equalsIgnoreCase(".xls")){
+                            Toast.makeText(getActivity(),"In From  XLS",Toast.LENGTH_SHORT);
+                        }
+                    }
+                    if(fileFormat1.equalsIgnoreCase("Month") ){
 
-                    };
-                    Log.d("date", String.valueOf(myCalendar.getTime()));
+                        if(fileFormat.equalsIgnoreCase(".pdf")) {
+                            String dbname = sharedPreferences.getString("dbname","empty");
+                            String fromDateString=txt_FromDate.getText().toString();
+                            String toDateString = txt_toDate.getText().toString();
+                            String month = txt_fromMonth.getText().toString();
+                            String year = txt_fromYear.getText().toString();
+                            String till = txt_tillDate.getText().toString();
+
+                            ArrayList<String> shopInfo = new ArrayList<>();
+
+                            shopInfo.add(sharedPreferences.getString("userId","empty"));
+                            shopInfo.add(sharedPreferences.getString("username","empty"));
+                            shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                            shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                            shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                            shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                            shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                            shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                            shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                            shopInfo.add(sharedPreferences.getString("address","empty"));
+                            shopInfo.add(sharedPreferences.getString("state","empty"));
+                            shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                            String pdfUrl = "http://mhourz-shopmgmt.surge.sh/DayBookReport?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=month";
+                            Uri uri = Uri.parse(pdfUrl);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri,"text/html");
+                            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            Log.d("final url:",uri.toString());
+
+                        }
+                        else if ( fileFormat.equalsIgnoreCase(".xls")){
+                            Toast.makeText(getActivity(),"In Month  XLS",Toast.LENGTH_SHORT);
+                        }
+                    }
+                    if(fileFormat1.equalsIgnoreCase("Year") ){
+
+                        if(fileFormat.equalsIgnoreCase(".pdf")) {
+                            String dbname = sharedPreferences.getString("dbname","empty");
+                            String fromDateString=txt_FromDate.getText().toString();
+                            String toDateString = txt_toDate.getText().toString();
+                            String month = txt_fromMonth.getText().toString();
+                            String year = txt_fromYear.getText().toString();
+                            String till = txt_tillDate.getText().toString();
+
+                            ArrayList<String> shopInfo = new ArrayList<>();
+
+                            shopInfo.add(sharedPreferences.getString("userId","empty"));
+                            shopInfo.add(sharedPreferences.getString("username","empty"));
+                            shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                            shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                            shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                            shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                            shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                            shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                            shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                            shopInfo.add(sharedPreferences.getString("address","empty"));
+                            shopInfo.add(sharedPreferences.getString("state","empty"));
+                            shopInfo.add(sharedPreferences.getString("shopName","empty"));
+                            String pdfUrl = "http://mhourz-shopmgmt.surge.sh/DayBookReport?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=year";
+                            Uri uri = Uri.parse(pdfUrl);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri,"text/html");
+                            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            Log.d("final url:",uri.toString());
+                        }
+                        else if ( fileFormat.equalsIgnoreCase(".xls")){
+                            Toast.makeText(getActivity(),"In Year  XLS",Toast.LENGTH_SHORT);
+                        }
+                    }
+                    if(fileFormat1.equalsIgnoreCase("Till") ){
+
+                        String dbname = sharedPreferences.getString("dbname","empty");
+                        String fromDateString=txt_FromDate.getText().toString();
+                        String toDateString = txt_toDate.getText().toString();
+                        String month = txt_fromMonth.getText().toString();
+                        String year = txt_fromYear.getText().toString();
+                        String till = txt_tillDate.getText().toString();
+
+                        ArrayList<String> shopInfo = new ArrayList<>();
+
+                        shopInfo.add(sharedPreferences.getString("userId","empty"));
+                        shopInfo.add(sharedPreferences.getString("username","empty"));
+                        shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                        shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                        shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                        shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                        shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                        shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                        shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                        shopInfo.add(sharedPreferences.getString("address","empty"));
+                        shopInfo.add(sharedPreferences.getString("state","empty"));
+                        shopInfo.add(sharedPreferences.getString("shopName","empty"));
+                        String pdfUrl = "http://mhourz-shopmgmt.surge.sh/DayBookReport?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=till";
+                        Uri uri = Uri.parse(pdfUrl);
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(uri,"text/html");
+                        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                        Log.d("final url:",uri.toString());
+                        }
+                        else if ( fileFormat.equalsIgnoreCase(".xls")){
+                            Toast.makeText(getActivity(),"In Till  XLS",Toast.LENGTH_SHORT);
+                        }
                 }
             });
-            if(pdf.isChecked())
-            {
+        }
+//
+        else
+            if(("Discount").equalsIgnoreCase(mParam2)){
+//
+            tx_title.setText("Discount Report");
+
+                fromDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        String fromDateString;
+
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        // datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_FromDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                toDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        //datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_toDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                month.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromMonth.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+                onlyYear.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromYear.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+
+                Date dt = new Date();
+                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+                String currentDateTimeString = dateFormat.format(dt);
+                txt_tillDate.setText(currentDateTimeString);
+
                 download.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                        Uri uri = Uri.parse("http://www.google.co.in");
-                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT,uri);
-                        startActivity(intent);
+                        View rootView = inflater.inflate(R.layout.report_dialog, container, false);
+                        int selectedId1 = rg1.getCheckedRadioButtonId();
+                        RadioButton radioButton1 = (RadioButton)rootView.findViewById(selectedId1);
+                        String  fileFormat1   =     radioButton1.getText().toString().trim();
+
+                        int selectedId = rg2.getCheckedRadioButtonId();
+                        RadioButton radioButton = (RadioButton)rootView.findViewById(selectedId);
+                        String  fileFormat   = radioButton.getText().toString().trim();
+
+                        //String Year = txttillDate.getText().toString().trim();
+
+                        Log.d(TAG, "onClick:pdf xls "+fileFormat);
+                        Log.d(TAG, "onClick: from to"+    fileFormat1);
+
+                        if(("From").equalsIgnoreCase(fileFormat1) ){
+
+                            if((".pdf").equalsIgnoreCase(fileFormat)) {
+
+
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Discount_Report_PDF?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=Yes";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In From  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Month") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Discount_Report_PDF?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=month";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Month  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Year") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Discount_Report_PDF?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=year";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Year  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Till") ){
+
+                            String dbname = sharedPreferences.getString("dbname","empty");
+                            String fromDateString=txt_FromDate.getText().toString();
+                            String toDateString = txt_toDate.getText().toString();
+                            String month = txt_fromMonth.getText().toString();
+                            String year = txt_fromYear.getText().toString();
+                            String till = txt_tillDate.getText().toString();
+
+                            ArrayList<String> shopInfo = new ArrayList<>();
+
+                            shopInfo.add(sharedPreferences.getString("userId","empty"));
+                            shopInfo.add(sharedPreferences.getString("username","empty"));
+                            shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                            shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                            shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                            shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                            shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                            shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                            shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                            shopInfo.add(sharedPreferences.getString("address","empty"));
+                            shopInfo.add(sharedPreferences.getString("state","empty"));
+                            shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                            String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Discount_Report_PDF?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=till";
+                            Uri uri = Uri.parse(pdfUrl);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri,"text/html");
+                            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            Log.d("final url:",uri.toString());
+                        }
+                        else if ( fileFormat.equalsIgnoreCase(".xls")){
+                            Toast.makeText(getActivity(),"In Till  XLS",Toast.LENGTH_SHORT);
+                        }
                     }
                 });
-            }
-            else if(xls.isChecked()){
-                download.setOnClickListener(new View.OnClickListener(){
+        }
+
+        else if(("ProfitLoss").equalsIgnoreCase(mParam3)){
+
+            tx_title.setText("Profit & Loss Report");
+                fromDate.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v){
+                    public void onClick(View view) {
+
+                        String fromDateString;
+
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        // datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_FromDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                toDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        //datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_toDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                month.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromMonth.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+                onlyYear.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromYear.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+
+                Date dt = new Date();
+                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+                String currentDateTimeString = dateFormat.format(dt);
+                txt_tillDate.setText(currentDateTimeString);
+
+                download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        View rootView = inflater.inflate(R.layout.report_dialog, container, false);
+                        int selectedId1 = rg1.getCheckedRadioButtonId();
+                        RadioButton radioButton1 = (RadioButton)rootView.findViewById(selectedId1);
+                        String  fileFormat1   =     radioButton1.getText().toString().trim();
+
+                        int selectedId = rg2.getCheckedRadioButtonId();
+                        RadioButton radioButton = (RadioButton)rootView.findViewById(selectedId);
+                        String  fileFormat   = radioButton.getText().toString().trim();
+
+                        //String Year = txttillDate.getText().toString().trim();
+
+                        Log.d(TAG, "onClick:pdf xls "+fileFormat);
+                        Log.d(TAG, "onClick: from to"+    fileFormat1);
+
+                        if(("From").equalsIgnoreCase(fileFormat1) ){
+
+                            if((".pdf").equalsIgnoreCase(fileFormat)) {
 
 
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Discount_Report_PDF?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=Yes";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In From  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Month") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Discount_Report_PDF?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=month";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Month  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Year") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Discount_Report_PDF?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=year";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Year  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Till") ){
+
+                            String dbname = sharedPreferences.getString("dbname","empty");
+                            String fromDateString=txt_FromDate.getText().toString();
+                            String toDateString = txt_toDate.getText().toString();
+                            String month = txt_fromMonth.getText().toString();
+                            String year = txt_fromYear.getText().toString();
+                            String till = txt_tillDate.getText().toString();
+
+                            ArrayList<String> shopInfo = new ArrayList<>();
+
+                            shopInfo.add(sharedPreferences.getString("userId","empty"));
+                            shopInfo.add(sharedPreferences.getString("username","empty"));
+                            shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                            shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                            shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                            shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                            shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                            shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                            shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                            shopInfo.add(sharedPreferences.getString("address","empty"));
+                            shopInfo.add(sharedPreferences.getString("state","empty"));
+                            shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                            String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Discount_Report_PDF?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=till";
+                            Uri uri = Uri.parse(pdfUrl);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri,"text/html");
+                            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            Log.d("final url:",uri.toString());
+                        }
+                        else if ( fileFormat.equalsIgnoreCase(".xls")){
+                            Toast.makeText(getActivity(),"In Till  XLS",Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
+
+
+        }
+
+            else if(("Sales").equalsIgnoreCase(mParam4)){
+
+            tx_title.setText("Sales Report");
+                fromDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        String fromDateString;
+
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        // datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_FromDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                toDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        //datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_toDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                month.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromMonth.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+                onlyYear.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromYear.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+
+                Date dt = new Date();
+                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+                String currentDateTimeString = dateFormat.format(dt);
+                txt_tillDate.setText(currentDateTimeString);
+
+                download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        View rootView = inflater.inflate(R.layout.report_dialog, container, false);
+                        int selectedId1 = rg1.getCheckedRadioButtonId();
+                        RadioButton radioButton1 = (RadioButton)rootView.findViewById(selectedId1);
+                        String  fileFormat1   =     radioButton1.getText().toString().trim();
+
+                        int selectedId = rg2.getCheckedRadioButtonId();
+                        RadioButton radioButton = (RadioButton)rootView.findViewById(selectedId);
+                        String  fileFormat   = radioButton.getText().toString().trim();
+
+                        //String Year = txttillDate.getText().toString().trim();
+
+                        Log.d(TAG, "onClick:pdf xls "+fileFormat);
+                        Log.d(TAG, "onClick: from to"+    fileFormat1);
+
+                        if(("From").equalsIgnoreCase(fileFormat1) ){
+
+                            if((".pdf").equalsIgnoreCase(fileFormat)) {
+
+
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/TotalSaleReport?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=Yes";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In From  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Month") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/TotalSaleReport?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=month";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Month  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Year") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/TotalSaleReport?ShopInfo=&"+shopInfo+"fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=year";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Year  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Till") ){
+
+                            String dbname = sharedPreferences.getString("dbname","empty");
+                            String fromDateString=txt_FromDate.getText().toString();
+                            String toDateString = txt_toDate.getText().toString();
+                            String month = txt_fromMonth.getText().toString();
+                            String year = txt_fromYear.getText().toString();
+                            String till = txt_tillDate.getText().toString();
+
+                            ArrayList<String> shopInfo = new ArrayList<>();
+
+                            shopInfo.add(sharedPreferences.getString("userId","empty"));
+                            shopInfo.add(sharedPreferences.getString("username","empty"));
+                            shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                            shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                            shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                            shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                            shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                            shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                            shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                            shopInfo.add(sharedPreferences.getString("address","empty"));
+                            shopInfo.add(sharedPreferences.getString("state","empty"));
+                            shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                            String pdfUrl = "http://mhourz-shopmgmt.surge.sh/TotalSaleReport?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=till";
+                            Uri uri = Uri.parse(pdfUrl);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri,"text/html");
+                            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            Log.d("final url:",uri.toString());
+                        }
+                        else if ( fileFormat.equalsIgnoreCase(".xls")){
+                            Toast.makeText(getActivity(),"In Till  XLS",Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
+        }
+            else if(("Purchase").equalsIgnoreCase(mParam5)){
+
+                tx_title.setText("Purchase Report");
+
+                fromDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        String fromDateString;
+
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        // datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_FromDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                toDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        //datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_toDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                month.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromMonth.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+                onlyYear.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromYear.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+
+                Date dt = new Date();
+                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+                String currentDateTimeString = dateFormat.format(dt);
+                txt_tillDate.setText(currentDateTimeString);
+
+                download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        View rootView = inflater.inflate(R.layout.report_dialog, container, false);
+                        int selectedId1 = rg1.getCheckedRadioButtonId();
+                        RadioButton radioButton1 = (RadioButton)rootView.findViewById(selectedId1);
+                        String  fileFormat1   =     radioButton1.getText().toString().trim();
+
+                        int selectedId = rg2.getCheckedRadioButtonId();
+                        RadioButton radioButton = (RadioButton)rootView.findViewById(selectedId);
+                        String  fileFormat   = radioButton.getText().toString().trim();
+
+                        //String Year = txttillDate.getText().toString().trim();
+
+                        Log.d(TAG, "onClick:pdf xls "+fileFormat);
+                        Log.d(TAG, "onClick: from to"+    fileFormat1);
+
+                        if(("From").equalsIgnoreCase(fileFormat1) ){
+
+                            if((".pdf").equalsIgnoreCase(fileFormat)) {
+
+
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Purchase_Report_All_Vendors?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=Yes";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In From  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Month") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Purchase_Report_All_Vendors?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=month";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Month  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Year") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Purchase_Report_All_Vendors?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=year";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Year  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Till") ){
+
+                            String dbname = sharedPreferences.getString("dbname","empty");
+                            String fromDateString=txt_FromDate.getText().toString();
+                            String toDateString = txt_toDate.getText().toString();
+                            String month = txt_fromMonth.getText().toString();
+                            String year = txt_fromYear.getText().toString();
+                            String till = txt_tillDate.getText().toString();
+
+                            ArrayList<String> shopInfo = new ArrayList<>();
+
+                            shopInfo.add(sharedPreferences.getString("userId","empty"));
+                            shopInfo.add(sharedPreferences.getString("username","empty"));
+                            shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                            shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                            shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                            shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                            shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                            shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                            shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                            shopInfo.add(sharedPreferences.getString("address","empty"));
+                            shopInfo.add(sharedPreferences.getString("state","empty"));
+                            shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                            String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Purchase_Report_All_Vendors?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=till";
+                            Uri uri = Uri.parse(pdfUrl);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri,"text/html");
+                            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            Log.d("final url:",uri.toString());
+                        }
+                        else if ( fileFormat.equalsIgnoreCase(".xls")){
+                            Toast.makeText(getActivity(),"In Till  XLS",Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
+
+
+            }
+            else if(("Expenses").equalsIgnoreCase(mParam6)){
+
+                tx_title.setText("Expenses Report");
+
+                fromDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        String fromDateString;
+
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        // datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_FromDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                toDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        //datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_toDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                month.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromMonth.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+                onlyYear.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromYear.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+
+                Date dt = new Date();
+                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+                String currentDateTimeString = dateFormat.format(dt);
+                txt_tillDate.setText(currentDateTimeString);
+
+                download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        View rootView = inflater.inflate(R.layout.report_dialog, container, false);
+                        int selectedId1 = rg1.getCheckedRadioButtonId();
+                        RadioButton radioButton1 = (RadioButton)rootView.findViewById(selectedId1);
+                        String  fileFormat1   =     radioButton1.getText().toString().trim();
+
+                        int selectedId = rg2.getCheckedRadioButtonId();
+                        RadioButton radioButton = (RadioButton)rootView.findViewById(selectedId);
+                        String  fileFormat   = radioButton.getText().toString().trim();
+
+                        //String Year = txttillDate.getText().toString().trim();
+
+                        Log.d(TAG, "onClick:pdf xls "+fileFormat);
+                        Log.d(TAG, "onClick: from to"+    fileFormat1);
+
+                        if(("From").equalsIgnoreCase(fileFormat1) ){
+
+                            if((".pdf").equalsIgnoreCase(fileFormat)) {
+
+
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Expense_by_shop?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=Yes";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In From  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Month") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Expense_by_shop?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=month";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Month  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Year") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Expense_by_shop?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=year";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Year  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Till") ){
+
+                            String dbname = sharedPreferences.getString("dbname","empty");
+                            String fromDateString=txt_FromDate.getText().toString();
+                            String toDateString = txt_toDate.getText().toString();
+                            String month = txt_fromMonth.getText().toString();
+                            String year = txt_fromYear.getText().toString();
+                            String till = txt_tillDate.getText().toString();
+
+                            ArrayList<String> shopInfo = new ArrayList<>();
+
+                            shopInfo.add(sharedPreferences.getString("userId","empty"));
+                            shopInfo.add(sharedPreferences.getString("username","empty"));
+                            shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                            shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                            shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                            shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                            shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                            shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                            shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                            shopInfo.add(sharedPreferences.getString("address","empty"));
+                            shopInfo.add(sharedPreferences.getString("state","empty"));
+                            shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                            String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Expense_by_shop?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=till";
+                            Uri uri = Uri.parse(pdfUrl);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri,"text/html");
+                            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            Log.d("final url:",uri.toString());
+                        }
+                        else if ( fileFormat.equalsIgnoreCase(".xls")){
+                            Toast.makeText(getActivity(),"In Till  XLS",Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
+
+
+            }
+            else if(("Tax").equalsIgnoreCase(mParam7)){
+
+                tx_title.setText("Tax Report");
+
+                fromDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        String fromDateString;
+
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        // datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_FromDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                toDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        //datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_toDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                month.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromMonth.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+                onlyYear.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromYear.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+
+                Date dt = new Date();
+                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+                String currentDateTimeString = dateFormat.format(dt);
+                txt_tillDate.setText(currentDateTimeString);
+
+                download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        View rootView = inflater.inflate(R.layout.report_dialog, container, false);
+                        int selectedId1 = rg1.getCheckedRadioButtonId();
+                        RadioButton radioButton1 = (RadioButton)rootView.findViewById(selectedId1);
+                        String  fileFormat1   =     radioButton1.getText().toString().trim();
+
+                        int selectedId = rg2.getCheckedRadioButtonId();
+                        RadioButton radioButton = (RadioButton)rootView.findViewById(selectedId);
+                        String  fileFormat   = radioButton.getText().toString().trim();
+
+                        //String Year = txttillDate.getText().toString().trim();
+
+                        Log.d(TAG, "onClick:pdf xls "+fileFormat);
+                        Log.d(TAG, "onClick: from to"+    fileFormat1);
+
+                        if(("From").equalsIgnoreCase(fileFormat1) ){
+
+                            if((".pdf").equalsIgnoreCase(fileFormat)) {
+
+
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Tax_Report?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=Yes";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In From  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Month") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Tax_Report?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=month";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Month  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Year") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Tax_Report?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=year";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Year  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Till") ){
+
+                            String dbname = sharedPreferences.getString("dbname","empty");
+                            String fromDateString=txt_FromDate.getText().toString();
+                            String toDateString = txt_toDate.getText().toString();
+                            String month = txt_fromMonth.getText().toString();
+                            String year = txt_fromYear.getText().toString();
+                            String till = txt_tillDate.getText().toString();
+
+                            ArrayList<String> shopInfo = new ArrayList<>();
+
+                            shopInfo.add(sharedPreferences.getString("userId","empty"));
+                            shopInfo.add(sharedPreferences.getString("username","empty"));
+                            shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                            shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                            shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                            shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                            shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                            shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                            shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                            shopInfo.add(sharedPreferences.getString("address","empty"));
+                            shopInfo.add(sharedPreferences.getString("state","empty"));
+                            shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                            String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Tax_Report?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=till";
+                            Uri uri = Uri.parse(pdfUrl);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri,"text/html");
+                            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            Log.d("final url:",uri.toString());
+                        }
+                        else if ( fileFormat.equalsIgnoreCase(".xls")){
+                            Toast.makeText(getActivity(),"In Till  XLS",Toast.LENGTH_SHORT);
+                        }
                     }
                 });
             }
-            else{
-                Toast.makeText(getContext(),"Please select one option to proceed",Toast.LENGTH_LONG);
+            else if(("TaxRate").equalsIgnoreCase(mParam8)){
+
+                tx_title.setText("TaxRate Report");
+
+                fromDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        String fromDateString;
+
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        // datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_FromDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                toDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DatePickFragments datePickFragments=  DatePickFragments.getInstance(ReportFragment.this);
+                        Log.d(TAG, "onClick: datePicker"+datePickFragments);
+
+                        //   DatePickFragments datePickFragments=new DatePickFragments(ReportFragment.this);
+                        //datePickFragments.show((fragmentActivity.getSupportFragmentManager()),"date");
+
+                        final Calendar myCalendar = Calendar.getInstance();
+
+                        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                                  int dayOfMonth) {
+                                // TODO Auto-generated method stub
+                                myCalendar.set(Calendar.YEAR, year);
+                                myCalendar.set(Calendar.MONTH, monthOfYear);
+                                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                Date date1 = myCalendar.getTime();
+
+                                //updateDate(myCalendar);
+                                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                                String currentDateTimeString = dateFormat.format(myCalendar.getTime());
+                                txt_toDate.setText(currentDateTimeString);
+
+                            }
+
+                        };
+
+                        new DatePickerDialog(getContext(),date,
+                                myCalendar.get(Calendar.YEAR),
+                                myCalendar.get(Calendar.MONTH),
+                                myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                    }
+                });
+
+                month.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromMonth.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+                onlyYear.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        YearMonthPickerDialog.OnDateSetListener yd =  new YearMonthPickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onYearMonthSet(int year, int month) {
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.set(Calendar.YEAR,year);
+                                calendar.set(Calendar.MONTH,month);
+                                calendar.set(Calendar.DAY_OF_MONTH,1);
+
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM-yyyy");
+                                String currentMonthYear = dateFormat.format(calendar.getTime());
+                                txt_fromYear.setText(currentMonthYear);
+
+                                calendar.add(Calendar.MONTH,+1);
+                                calendar.add(Calendar.DATE,-1);
+                            }
+                        };
+                        new YearMonthPickerDialog(getActivity(),yd).show();
+                    }
+                });
+
+                Date dt = new Date();
+                java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+                String currentDateTimeString = dateFormat.format(dt);
+                txt_tillDate.setText(currentDateTimeString);
+
+                download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        View rootView = inflater.inflate(R.layout.report_dialog, container, false);
+                        int selectedId1 = rg1.getCheckedRadioButtonId();
+                        RadioButton radioButton1 = (RadioButton)rootView.findViewById(selectedId1);
+                        String  fileFormat1   =     radioButton1.getText().toString().trim();
+
+                        int selectedId = rg2.getCheckedRadioButtonId();
+                        RadioButton radioButton = (RadioButton)rootView.findViewById(selectedId);
+                        String  fileFormat   = radioButton.getText().toString().trim();
+
+                        //String Year = txttillDate.getText().toString().trim();
+
+                        Log.d(TAG, "onClick:pdf xls "+fileFormat);
+                        Log.d(TAG, "onClick: from to"+    fileFormat1);
+
+                        if(("From").equalsIgnoreCase(fileFormat1) ){
+
+                            if((".pdf").equalsIgnoreCase(fileFormat)) {
+
+
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Tax_Rate_Report?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=Yes";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In From  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Month") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Tax_Rate_Report?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=month";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Month  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Year") ){
+
+                            if(fileFormat.equalsIgnoreCase(".pdf")) {
+                                String dbname = sharedPreferences.getString("dbname","empty");
+                                String fromDateString=txt_FromDate.getText().toString();
+                                String toDateString = txt_toDate.getText().toString();
+                                String month = txt_fromMonth.getText().toString();
+                                String year = txt_fromYear.getText().toString();
+                                String till = txt_tillDate.getText().toString();
+
+                                ArrayList<String> shopInfo = new ArrayList<>();
+
+                                shopInfo.add(sharedPreferences.getString("userId","empty"));
+                                shopInfo.add(sharedPreferences.getString("username","empty"));
+                                shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                                shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                                shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                                shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                                shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                                shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                                shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                                shopInfo.add(sharedPreferences.getString("address","empty"));
+                                shopInfo.add(sharedPreferences.getString("state","empty"));
+                                shopInfo.add(sharedPreferences.getString("shopName","empty"));
+                                String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Tax_Rate_Report?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=year";
+                                Uri uri = Uri.parse(pdfUrl);
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                intent.setDataAndType(uri,"text/html");
+                                //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                Log.d("final url:",uri.toString());
+                            }
+                            else if ( fileFormat.equalsIgnoreCase(".xls")){
+                                Toast.makeText(getActivity(),"In Year  XLS",Toast.LENGTH_SHORT);
+                            }
+                        }
+                        if(fileFormat1.equalsIgnoreCase("Till") ){
+
+                            String dbname = sharedPreferences.getString("dbname","empty");
+                            String fromDateString=txt_FromDate.getText().toString();
+                            String toDateString = txt_toDate.getText().toString();
+                            String month = txt_fromMonth.getText().toString();
+                            String year = txt_fromYear.getText().toString();
+                            String till = txt_tillDate.getText().toString();
+
+                            ArrayList<String> shopInfo = new ArrayList<>();
+
+                            shopInfo.add(sharedPreferences.getString("userId","empty"));
+                            shopInfo.add(sharedPreferences.getString("username","empty"));
+                            shopInfo.add(sharedPreferences.getString("usermobile","empty"));
+                            shopInfo.add(sharedPreferences.getString("useremail","empty"));
+                            shopInfo.add(sharedPreferences.getString("userrole","empty"));
+                            shopInfo.add(sharedPreferences.getString("userpassword","empty"));
+                            shopInfo.add(sharedPreferences.getString("s_id","empty"));
+                            shopInfo.add(sharedPreferences.getString("dbname","empty"));
+                            shopInfo.add(sharedPreferences.getString("gstNo","empty"));
+                            shopInfo.add(sharedPreferences.getString("address","empty"));
+                            shopInfo.add(sharedPreferences.getString("state","empty"));
+                            shopInfo.add(sharedPreferences.getString("shopName","empty"));
+
+                            String pdfUrl = "http://mhourz-shopmgmt.surge.sh/Tax_Rate_Report?ShopInfo="+shopInfo+"&fromDate=" +fromDateString + "&toDate="+toDateString+"&month="+month+"&year="+year+"&till="+till+"&dbname="+dbname+"&radioValue=till";
+                            Uri uri = Uri.parse(pdfUrl);
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(uri,"text/html");
+                            //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            Log.d("final url:",uri.toString());
+                        }
+                        else if ( fileFormat.equalsIgnoreCase(".xls")){
+                            Toast.makeText(getActivity(),"In Till  XLS",Toast.LENGTH_SHORT);
+                        }
+                    }
+                });
             }
-        }
-        else{
-            Toast.makeText(getContext(),"Please select one option to proceed",Toast.LENGTH_LONG);
-        }
+
+
+//        else{Toast.makeText(getContext(),"Please select one option to proceed",Toast.LENGTH_LONG); }
 
         return view;
     }
-
-//    private void show(){
-//        new YearMonthPickerDialog(this, new YearMonthPickerDialog.OnDateSetListener() {
-//            @Override
-//            public void onYearMonthSet(int year, int month)
-//            {
-//                Log.d(TAG, "onYearMonthSet: Year Month"+year+" "+month);
-//                Calendar calendar = Calendar.getInstance();
-//                calendar.set(Calendar.YEAR, year);
-//                calendar.set(Calendar.MONTH, month);
-//                calendar.set(Calendar.DAY_OF_MONTH,1);
-//
-//                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
-//                currentDateTime= dateFormat.format(calendar.getTime());
-//
-//                currentDate.setText(dateFormat.format(calendar.getTime()));
-//                // calendar.set(calendar.MONTH,month+1);
-//                Log.d(TAG, "onYearMonthSet: " + dateFormat.format(calendar.getTime()));
-//                calendar.add(Calendar.MONTH,1);
-//                calendar.add(Calendar.DATE,-1);
-//
-//                getProfitLoss_Status();
-//                Log.d(TAG, "onYearMonthSet: "+dateFormat.format(calendar.getTime()));
-//
-//                //calendar.add(Calendar.DATE,-1);
-//
-//                // nextMonth=dateFormat.format(calendar.getTime());
-//
-//                Log.d(TAG, "onYearMonthSet:" + dateFormat.format(calendar.getTime()));
-//            }
-//        }).show();
-//    }
-
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri)

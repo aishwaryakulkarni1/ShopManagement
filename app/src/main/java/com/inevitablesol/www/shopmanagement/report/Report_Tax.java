@@ -93,7 +93,9 @@ public class Report_Tax extends AppCompatActivity
         imgTaxDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Report_Tax.this,ReportActivity_Dailog.class));
+                Intent i = new Intent(Report_Tax.this,ReportActivity_Dailog.class);
+                i.putExtra("Tax","Tax");
+                startActivity(i);
             }
         });
 

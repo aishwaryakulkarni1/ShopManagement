@@ -89,6 +89,7 @@ public class Profit_and_loss extends AppCompatActivity
         tot_amt = (TextView) findViewById(R.id.tot_amt);
         profit = (TextView) findViewById(R.id.profit);
         loss = (TextView) findViewById(R.id.loss);
+        currentDate=(TextView) findViewById(R.id.bill_curruntDate);
 
         Date dt = new Date();
         java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM");
@@ -112,7 +113,10 @@ public class Profit_and_loss extends AppCompatActivity
         imgPLDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Profit_and_loss.this,ReportActivity_Dailog.class));
+
+                Intent intent = new Intent(Profit_and_loss.this,ReportActivity_Dailog.class);
+                intent.putExtra("ProfitLoss","ProfitLoss");
+                startActivity(intent);
             }
         });
 

@@ -85,7 +85,9 @@ public class Report_TaxRate extends AppCompatActivity {
         });
 
         currentDate = (TextView) findViewById(R.id.bill_curruntDate);
-        currentDateTimeString = new SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(new Date());
+        Date dt = new Date();
+        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM");
+        currentDateTimeString = dateFormat.format(dt);
         currentDate.setText(currentDateTimeString);
 
         imgTaxRateDownload = (ImageView) findViewById(R.id.sale_download_product);
@@ -93,7 +95,9 @@ public class Report_TaxRate extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                startActivity(new Intent(Report_TaxRate.this, ReportActivity_Dailog.class));
+                Intent i = new Intent(Report_TaxRate.this, ReportActivity_Dailog.class);
+                i.putExtra("TaxRate","TaxRate");
+                startActivity(i);
             }
         });
 

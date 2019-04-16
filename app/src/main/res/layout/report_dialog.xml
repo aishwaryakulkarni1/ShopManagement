@@ -51,7 +51,7 @@
                     <android.support.v7.widget.AppCompatRadioButton
                         android:layout_width="wrap_content"
                         style="@style/RadioButton"
-                        android:text="From:"
+                        android:text="From"
                         android:id="@+id/total_from"
                         android:textColor="@color/white"
                         android:layout_height="wrap_content" />
@@ -60,14 +60,14 @@
                         android:layout_width="wrap_content"
                         style="@style/RadioButton"
                         android:id="@+id/total_month"
-                        android:text="Month:"
+                        android:text="Month"
                         android:textColor="@color/white"
                         android:layout_height="wrap_content" />
 
                     <android.support.v7.widget.AppCompatRadioButton
                         android:layout_width="wrap_content"
                         style="@style/RadioButton"
-                        android:text="Year:"
+                        android:text="Year"
                         android:id="@+id/total_year"
                         android:textColor="@color/white"
                         android:layout_height="wrap_content" />
@@ -75,7 +75,7 @@
                     <android.support.v7.widget.AppCompatRadioButton
                         android:layout_width="wrap_content"
                         style="@style/RadioButton"
-                        android:text="Till:"
+                        android:text="Till"
                         android:id="@+id/till"
                         android:textColor="@color/white"
                         android:layout_height="wrap_content" />
@@ -98,7 +98,7 @@
                     <TextView
                         android:id="@+id/total_fromdate"
                         android:layout_width="0dp"
-                        android:layout_height="24dp"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1.30"
                         android:textColor="@color/white" />

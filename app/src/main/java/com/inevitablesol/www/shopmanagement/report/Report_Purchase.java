@@ -81,7 +81,9 @@ public class Report_Purchase extends AppCompatActivity implements WEBAPI {
         imgPurchaseDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Report_Purchase.this,ReportActivity_Dailog.class));
+                Intent i = new Intent(Report_Purchase.this,ReportActivity_Dailog.class);
+                i.putExtra("Purchase","Purchase");
+                startActivity(i);
             }
         });
         getReportByPurchase();
@@ -114,20 +116,12 @@ public class Report_Purchase extends AppCompatActivity implements WEBAPI {
                 //calendar.add(Calendar.DATE,-1);
 
                 // nextMonth=dateFormat.format(calendar.getTime());
-
-
                 Log.d(TAG, "onYearMonthSet:" + dateFormat.format(calendar.getTime()));
 
                 getReportByPurchase();
-
-
-
-
             }
         }).show();
     }
-
-
 
     private void getReportByPurchase()
     {

@@ -284,17 +284,19 @@ public class Edit_User extends AppCompatActivity implements View.OnClickListener
                         }
                     });
 
+                    spinner.setAdapter(adapter);
+                    spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            com.inevitablesol.www.shopmanagement.account.Record record= adapter.getItem(position);
+                            Log.d(TAG, "onItemClick: Record"+record.toString());
+                        }
 
-//                    spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//                        @Override
-//                        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-//                        {
-//                                                     com.inevitablesol.www.shopmanagement.account.Record record= adapter.getItem(position);
-//                            Log.d(TAG, "onItemClick: Record"+record.toString());
-//
-//                        }
-//                    });
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+
+                        }
+                    });
 
 //                                  SubUser_adapter subUser_adapter=new SubUser_adapter(userClass);
 //                                  userData.setAdapter( subUser_adapter);

@@ -103,9 +103,9 @@ public class DayBook_Activity extends AppCompatActivity implements ReportFragmen
             @Override
             public void onClick(View v)
             {
-
-
-                startActivity(new Intent(DayBook_Activity.this,ReportActivity_Dailog.class));
+                Intent intent = new Intent(DayBook_Activity.this,ReportActivity_Dailog.class);
+                intent.putExtra("DayBook","DayBook");
+                startActivity(intent);
             }
         });
 

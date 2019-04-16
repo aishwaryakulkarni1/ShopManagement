@@ -56,7 +56,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:textColor="@color/colorPrimary"
-                    android:text="@string/Name"
+                    android:text="@string/BusinessName"
                     android:layout_margin="5dp"
                     android:layout_height="wrap_content" />
                 <TextView
@@ -74,12 +74,12 @@
                     android:text="@string/ShopActName"
                     android:layout_height="wrap_content" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@string/CIN"
-                    android:layout_margin="5dp"
-                    android:layout_height="wrap_content" />
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:textColor="@color/colorPrimary"-->
+                    <!--android:text="@string/CIN"-->
+                    <!--android:layout_margin="5dp"-->
+                    <!--android:layout_height="wrap_content" />-->
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -91,17 +91,17 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:textColor="@color/colorPrimary"
-                    android:text="@string/ShopPanNumber"
+                    android:text="@string/BusinessPanNumber"
                     android:layout_margin="5dp"
                     android:layout_height="wrap_content" />
 
-                <TextView
+                <!--<TextView-->
 
-                    android:layout_width="wrap_content"
-                    android:layout_margin="5dp"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@string/ShopDesrciption"
-                    android:layout_height="wrap_content" />
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_margin="5dp"-->
+                    <!--android:textColor="@color/colorPrimary"-->
+                    <!--android:text="@string/ShopDesrciption"-->
+                    <!--android:layout_height="wrap_content" />-->
 
                 <TextView
                     android:layout_width="wrap_content"

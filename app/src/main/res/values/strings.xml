@@ -322,12 +322,12 @@
     <string name="EDITPHOTO">EDIT PHOTO</string>
     <string name="UserDetaails">User Details</string>
     <string name="UserType">User Type :</string>
-    <string name="Name">Name :</string>
+    <string name="BusinessName">Business Name :</string>
     <string name="TypeOfBusiness">Type of Business :</string>
     <string name="ShopActName">Shop Act No :</string>
     <string name="CIN">CIN :</string>
     <string name="GSTINUN">GSTIN/UIN :</string>
-    <string name="ShopPanNumber">Shop PAN No :</string>
+    <string name="BusinessPanNumber">Business PAN No :</string>
     <string name="ShopDesrciption">Shop Description :</string>
     <string name="Owner">Owner Details</string>
     <string name="OwnerName">Owner Name</string>

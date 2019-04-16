@@ -80,7 +80,10 @@ public class Report_Sale extends AppCompatActivity implements WEBAPI
         imgSaleDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Report_Sale.this,ReportActivity_Dailog.class));
+
+                Intent intent = new Intent(Report_Sale.this,ReportActivity_Dailog.class);
+                intent.putExtra("Sales","Sales");
+                startActivity(intent);
             }
         });
         Date dt = new Date();

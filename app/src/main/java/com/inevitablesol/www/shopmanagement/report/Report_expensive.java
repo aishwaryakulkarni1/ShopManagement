@@ -84,7 +84,9 @@ public class Report_expensive extends AppCompatActivity implements WEBAPI
         imgExpenseDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Report_expensive.this,ReportActivity_Dailog.class));
+                Intent intent = new Intent(Report_expensive.this,ReportActivity_Dailog.class);
+                intent.putExtra("Expenses","Expenses");
+                startActivity(intent);
             }
         });
         getExpReport();
@@ -155,11 +157,12 @@ public class Report_expensive extends AppCompatActivity implements WEBAPI
                             }else
                             {
                                 Gson gson=new Gson();
-                                ExpReports expReports=new ExpReports();
-                                expReports=gson.fromJson(response,expReports.getClass());
+                                ExpReports expReport=new ExpReports();
+                                expReports=gson.fromJson(response,expReport.getClass());
                                 exprecords= (ArrayList<Exprecord>) expReports.getExprecords();
 
                                 expAdapter =new ExpAdapter(exprecords);
+
                                 recyclerView.setHasFixedSize(true);
                                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
                                 recyclerView.setLayoutManager(layoutManager);

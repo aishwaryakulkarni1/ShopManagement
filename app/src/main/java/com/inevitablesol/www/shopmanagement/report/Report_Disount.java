@@ -64,9 +64,10 @@ public class Report_Disount extends AppCompatActivity {
                 showDate();
             }
         });
-
         currentDate = (TextView) findViewById(R.id.bill_curruntDate);
-        currentDateTimeString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        Date dt = new Date();
+        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyy-MM-dd");
+        currentDateTimeString = dateFormat.format(dt);
         currentDate.setText(currentDateTimeString);
 
         imgDiscDownload = (ImageView) findViewById(R.id.img_discount);
@@ -74,7 +75,9 @@ public class Report_Disount extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                startActivity(new Intent(Report_Disount.this,ReportActivity_Dailog.class));
+                Intent intent = new Intent(Report_Disount.this,ReportActivity_Dailog.class);
+                intent.putExtra("Discount","Discount");
+                startActivity(intent);
             }
         });
 
@@ -103,8 +106,6 @@ public class Report_Disount extends AppCompatActivity {
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH, monthOfYear);
                 myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                Date date1 = myCalendar.getTime();
-
                 updateDate(myCalendar);
             }
         };
